@@ -197,7 +197,7 @@ theorem synchronized_injective (Θ : HCParams n) (f : BinOp n)
   have ⟨b⟩ : Nonempty (Fin n) := ⟨⟨0, NeZero.pos n⟩⟩
   exact (hloop.toIsQuasigroup.right_cancel b).1 (hrow b)
 
-/-! ## Theorems 6 and 7 -/
+/-! ## Theorems 7 and 12 -/
 
 /-- Helper: a loop with UnitaryCollinear factorization is a group. -/
 private theorem loop_uc_associative (f : BinOp n)
