@@ -5,10 +5,10 @@
   Collinear Factorization ↔ Group Isotope (Section 4).
 
   Main results:
-  - Lemma 4 (Synchronization): unitary collinear → synchronized gauge A'=B'=(C')†
-  - Lemma 5 (Homomorphism & Injectivity): synchronized map ρ: Q → U(n)
-  - Theorem 6: Unitary collinearity ⟹ group isotope
-  - Theorem 7: General collinearity ⟹ group isotope
+  - Lemma 5 (Synchronization): unitary collinear → synchronized gauge A'=B'=(C')†
+  - Lemma 6 (Homomorphism & Injectivity): synchronized map ρ: Q → U(n)
+  - Theorem 7: Unitary collinearity ⟹ group isotope
+  - Theorem 12: General collinearity ⟺ group isotope
   - Lemma 8: Group isotope ⟹ unitary collinear factorization (via left-regular rep)
   - Lemma 9: Uniqueness of representation (character theory)
 -/
@@ -66,7 +66,7 @@ theorem quasigroup_isotopic_to_loop (f : BinOp n) (hq : IsQuasigroup f) :
         rw [this]; exact R_e.apply_symm_apply a
   · exact ⟨R_e, L_e, 1, fun a b => by simp [g]⟩
 
-/-! ## Lemma 4: Synchronization -/
+/-! ## Lemma 5: Synchronization -/
 
 structure Synchronized (Θ : HCParams n) (f : BinOp n) where
   rho : Fin n → Matrix (Fin n) (Fin n) ℂ
@@ -143,7 +143,7 @@ theorem synchronization (Θ : HCParams n) (f : BinOp n)
       exact mul_eq_one_comm.mp (huc.unitaryA _)
   }⟩⟩
 
-/-! ## Lemma 5: Homomorphism and Injectivity -/
+/-! ## Lemma 6: Homomorphism and Injectivity -/
 
 theorem synchronized_homomorphism (Θ : HCParams n) (f : BinOp n)
     (hloop : IsLoop f) (hsync : Synchronized Θ f) (hfeas : Factorizes Θ f) :
@@ -784,9 +784,9 @@ def IsGlobalMinimizer (Θ : HCParams n) (f : BinOp n) : Prop :=
   Factorizes Θ f ∧ ∀ Θ' : HCParams n, Factorizes Θ' f →
     (objective Θ f).re ≤ (objective Θ' f).re
 
-/-! ## Theorem 20: Strict Gap for Non-Group Isotopes (Conditional) -/
+/-! ## Theorem 21: Strict Gap for Non-Group Isotopes (Conditional) -/
 
-/-- **Revised Conjecture 14 (Strong Collinearity Dominance).**
+/-- **Revised Conjecture 20 (Strong Collinearity Dominance).**
     For any global minimizer Θ* of H on the feasible set, the inverse penalty
     dominates: B(Θ*) ≥ 3|δ| - c · R(Θ*) for a universal c ∈ [0,1).
 
@@ -841,7 +841,7 @@ theorem uc_objective_value (Θ : HCParams n) (f : BinOp n) (huc : UnitaryColline
   simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   norm_num; ring
 
-/-- **Theorem 20 (Strict Gap for Non-Group Isotopes, Conditional).**
+/-- **Theorem 21 (Strict Gap for Non-Group Isotopes, Conditional).**
     For non-group-isotope quasigroups, every feasible Θ has H > 3n².
     Proof: the revised dominance axiom holds at global minimizers, and for
     non-group-isotopes R > 0 at any feasible point (no collinear factorization
@@ -890,7 +890,7 @@ theorem strict_gap_non_group (f : BinOp n) (hq : IsQuasigroup f)
   -- Step 5: Θ is feasible, so H(Θ) ≥ H(Θ_min) > 3n²
   linarith [hmin_opt Θ hfeas]
 
-/-- **Theorem 16 (Optimality within the Collinear Manifold).**
+/-- **Theorem 14 (Optimality within the Collinear Manifold).**
     Restricted to the feasible collinear manifold, the minimum of H is achieved
     by a unitary collinear factorization with value 3n². -/
 theorem collinear_manifold_optimality (f : BinOp n)

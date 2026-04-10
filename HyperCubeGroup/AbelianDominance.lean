@@ -1,7 +1,7 @@
 /-
   HyperCubeGroup.AbelianDominance
 
-  Proof of the Weak Collinearity Dominance Conjecture (Conjecture 17)
+  Proof of the Weak Collinearity Dominance Conjecture (Conjecture 18)
   for finite abelian groups.
 
   Strategy:

@@ -6,8 +6,8 @@
   Main results:
   - Lemma 10: Shared Gram matrices X, Y, Z (index-independent, trace-n PSD)
   - Lemma 11: Normalized rank κ = rank(X)/n ≤ 1, with κ=1 iff full-rank (unitary)
-  - Lemma 12: AM-GM lower bound B ≥ 3 Σ δ_abc |T_abc|^{4/3}
-  - Theorem 16: On the collinear manifold, the minimum of H is achieved by
+  - Lemma 13: AM-GM lower bound B ≥ 3 Σ δ_abc |T_abc|^{4/3}
+  - Theorem 14: On the collinear manifold, the minimum of H is achieved by
     a unitary collinear factorization with value 3|δ|
 -/
 
@@ -456,7 +456,7 @@ theorem kappa_one_iff_unitary (Θ : HCParams n) (f : BinOp n)
   have h1eqX := (frobNormSq_eq_zero_iff (1 - X)).mp hfrob
   rw [sub_eq_zero] at h1eqX; exact h1eqX.symm
 
-/-! ## Lemma 12: AM-GM Lower Bound -/
+/-! ## Lemma 13: AM-GM Lower Bound -/
 
 /-- Scalar AM-GM cubed: (α+β+γ)³ ≥ 27αβγ for nonneg reals. -/
 private theorem amgm_cubed (α β γ : ℝ) (hα : 0 ≤ α) (hβ : 0 ≤ β) (hγ : 0 ≤ γ) :
@@ -482,7 +482,7 @@ private theorem sum_inv_ge_three (a b c : ℝ) (ha : a > 0) (hb : b > 0) (hc : c
   -- s ≥ 0 and s³ ≥ 27 → s ≥ 3
   nlinarith [sq_nonneg (s - 3), sq_nonneg s]
 
-/-- **Lemma 12 (AM-GM Lower Bound).**
+/-- **Lemma 13 (AM-GM Lower Bound).**
     Assume nondegeneracy and perfect collinearity.
     B(Θ; δ) ≥ 3n² (for feasible Θ where |T|=1 on support). -/
 theorem amgm_lower_bound (Θ : HCParams n) (f : BinOp n)
@@ -576,7 +576,7 @@ theorem amgm_lower_bound (Θ : HCParams n) (f : BinOp n)
     _ = 3 * (n : ℝ) ^ 2 := by
         simp [Finset.sum_const, Fintype.card_fin, sq]; ring
 
-/-! ## Theorem 16: Optimality within the Collinear Manifold -/
+/-! ## Theorem 14: Optimality within the Collinear Manifold -/
 
 /-- A collinear factorization is **unitary** if all factor slices are unitary
     (in the normalized sense: ‖A_a‖² = 1, A_a A_a† = I). -/
