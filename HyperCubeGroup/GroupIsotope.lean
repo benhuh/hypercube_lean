@@ -1243,7 +1243,7 @@ theorem theorem9_equality_rigidity (f : BinOp n) (hq : IsQuasigroup f)
     - **Non-group isotopes:** every feasible factorisation satisfies
       `H > 3n²` strictly.
 
-    This packages the manuscript's Theorem 10 / HuhCube Conjecture 6.1
+    This packages the manuscript's Theorem 10 / HyperCube Conjecture 6.1
     resolution into a single statement. The proof uses only the axiom-free
     machinery (matrix AM-GM rigidity + Theorem 4 unitary case); it does NOT
     depend on the open `collinear_to_unitary_collinear` axiom. -/

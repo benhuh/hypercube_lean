@@ -1,8 +1,7 @@
 /-
   HyperCubeGroup.MatrixAMGM
 
-  The matrix AM--GM lemma (Prof Jeong, App_Abelian_Dominance.tex §2
-  "Unconditional Weak Dominance for Finite Groups", Lemma "Matrix AM--GM"),
+  The matrix AM--GM lemma (Lemma "Matrix AM--GM"),
   specialised to the case `τ_n(XYZ) = 1`. This is the irreducible
   "textbook input" from which the unconditional weak-dominance bound
   `H ≥ 3 n²` and its equality rigidity follow on any quasigroup.
