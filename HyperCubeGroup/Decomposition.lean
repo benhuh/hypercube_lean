@@ -1,13 +1,13 @@
 /-
   HyperCubeGroup.Decomposition
 
-  The orthogonal decomposition H = B + R (Section 3, Lemma 3).
+  The orthogonal decomposition H = B + R (Section 3, Lemma 1).
 
-  Key definitions:
+  Key definitions (manuscript `def:penalties`, Definition 4):
   - B(Θ; δ) = Σ δ_abc |T_abc|² (1/‖A_a‖² + 1/‖B_b‖² + 1/‖C_c‖²)
-    (inverse-scale penalty, Definition 1)
+    (inverse-scale penalty)
   - R(Θ; δ) = Σ δ_abc (‖Δ^(A)_abc‖² + ‖Δ^(B)_abc‖² + ‖Δ^(C)_abc‖²)
-    (misalignment penalty, Definition 2)
+    (misalignment penalty)
   - Δ^(A)_abc = (B_b C_c)† - T*_abc A_a / ‖A_a‖²
     (component of Jacobian orthogonal to factor slice)
 
@@ -30,9 +30,9 @@ variable {n : ℕ} [NeZero n]
 -- cauchySchwarz_jacobian and jacobian_lower_bound are proved below
 -- after the helper lemmas.
 
-/-! ## Definition 1: Inverse-Scale Penalty B -/
+/-! ## Definition 4 (inverse-scale half): Inverse-Scale Penalty B -/
 
-/-- The inverse-scale penalty B(Θ; δ) (Definition 1, Eq. 5):
+/-- The inverse-scale penalty B(Θ; δ) (Definition 4, Eq. 5):
     B = Σ δ_abc |T_abc|² (1/‖A_a‖² + 1/‖B_b‖² + 1/‖C_c‖²). -/
 def inversePenalty (Θ : HCParams n) (f : BinOp n) : ℂ :=
   ∑ a : Fin n, ∑ b : Fin n,
@@ -43,7 +43,7 @@ def inversePenalty (Θ : HCParams n) (f : BinOp n) : ℂ :=
        1 / frobNormSq (Θ.B b) +
        1 / frobNormSq (Θ.C c))
 
-/-! ## Definition 2: Misalignment Penalty R -/
+/-! ## Definition 4 (misalignment half): Misalignment Penalty R -/
 
 /-- The misalignment residual Δ^(A)_abc: the component of (B_b C_c)†
     orthogonal to A_a.
@@ -428,7 +428,7 @@ theorem misalignResidualC_orthog (Θ : HCParams n) (hnd : Nondegenerate Θ)
   field_simp
   ring
 
-/-- The misalignment penalty R(Θ; δ) (Definition 2, Eq. 6):
+/-- The misalignment penalty R(Θ; δ) (Definition 4, Eq. 6):
     R = Σ δ_abc (‖Δ^(A)‖² + ‖Δ^(B)‖² + ‖Δ^(C)‖²). -/
 def misalignPenalty (Θ : HCParams n) (f : BinOp n) : ℂ :=
   ∑ a : Fin n, ∑ b : Fin n,
@@ -458,9 +458,9 @@ theorem misalignPenalty_nonneg (Θ : HCParams n) (f : BinOp n) :
     have h3 := frobNormSq_nonneg (misalignResidualC Θ a b (f.op a b))
     linarith))
 
-/-! ## Lemma 3: The Orthogonal Decomposition H = B + R -/
+/-! ## Lemma 1: The Orthogonal Decomposition H = B + R -/
 
-/-  **Lemma 3 (Decomposition of H).**
+/-  **Lemma 1 (Decomposition of H).**
     For any parameters Θ and target δ, the objective decomposes as
     H(Θ) = B(Θ; δ) + R(Θ; δ).
     Consequently, H(Θ) ≥ B(Θ; δ), with equality iff R(Θ; δ) = 0.

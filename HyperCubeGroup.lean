@@ -15,3 +15,13 @@ import HyperCubeGroup.Decomposition
 import HyperCubeGroup.CollinearManifold
 import HyperCubeGroup.GroupIsotope
 import HyperCubeGroup.AbelianDominance
+import HyperCubeGroup.Spectral
+import HyperCubeGroup.BlockCyclic
+import HyperCubeGroup.MatrixAMGM
+import HyperCubeGroup.Plancherel
+import HyperCubeGroup.PontryaginBridge
+import HyperCubeGroup.ActiveSubspaceGeneric
+import HyperCubeGroup.ActiveSubspace
+import HyperCubeGroup.ActiveSubspaceConstruction
+import HyperCubeGroup.Tikhonov
+import HyperCubeGroup.Coercivity
