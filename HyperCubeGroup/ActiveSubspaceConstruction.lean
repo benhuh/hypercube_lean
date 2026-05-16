@@ -144,7 +144,7 @@ theorem gramOf_conjTranspose_C_eq (Θ : HCParams n) (c : Fin n) :
   unfold gramOf
   rw [Matrix.conjTranspose_conjTranspose, frobNormSq_conjTranspose_eq]
 
-/-- **Bridge to `shared_gram_matrices`:** under PerfectCollinearity +
+/-- **Bridge to `lemma2_shared_gram_matrices`:** under PerfectCollinearity +
     Nondegenerate + Factorizes, the generic gram matrices `gramOf (Θ.A a)`
     and `gramOf (Θ.C c)ᴴ` all coincide with the shared Gram `X`. -/
 theorem shared_gram_via_gramOf (Θ : HCParams n) (f : BinOp n)
@@ -153,7 +153,7 @@ theorem shared_gram_via_gramOf (Θ : HCParams n) (f : BinOp n)
     ∃ X : Matrix (Fin n) (Fin n) ℂ,
       (∀ a : Fin n, gramOf (Θ.A a) = X) ∧
       (∀ c : Fin n, gramOf (Θ.C c)ᴴ = X) := by
-  obtain ⟨X, hgA, hgC⟩ := shared_gram_matrices Θ f hq hnd hcol hfeas
+  obtain ⟨X, hgA, hgC⟩ := lemma2_shared_gram_matrices Θ f hq hnd hcol hfeas
   refine ⟨X, ?_, ?_⟩
   · intro a; rw [gramOf_A_eq_gramA]; exact hgA a
   · intro c; rw [gramOf_conjTranspose_C_eq]; exact hgC c
@@ -161,7 +161,7 @@ theorem shared_gram_via_gramOf (Θ : HCParams n) (f : BinOp n)
 /-! ## κ=1 case: discharge via rescaleByNorm
 
 In the κ=1 case (where the shared Gram matrix `X` equals the identity,
-i.e. `gramA Θ a = 1` for all `a` by `kappa_one_iff_unitary`), the
+i.e. `gramA Θ a = 1` for all `a` by `lemma3_kappa_one_iff_unitary`), the
 active-subspace construction reduces to the simple rescaling
 `A → A/√α`. We show that this rescaling preserves `Factorizes` and
 `PerfectCollinearity`.
@@ -561,9 +561,9 @@ theorem unitary_rescaleByNorm_A_of_kappa_one (Θ : HCParams n) (f : BinOp n)
     (hκ : ∀ a b : Fin n, kappaTriple Θ a b (f.op a b) = 1)
     (a : Fin n) :
     (rescaleByNorm Θ).A a * ((rescaleByNorm Θ).A a).conjTranspose = 1 := by
-  -- gramA Θ a = 1 (by kappa_one_iff_unitary).
+  -- gramA Θ a = 1 (by lemma3_kappa_one_iff_unitary).
   have h_gram : gramA Θ a = 1 :=
-    kappa_one_iff_unitary Θ f hq hnd hcol hfeas hκ a
+    lemma3_kappa_one_iff_unitary Θ f hq hnd hcol hfeas hκ a
   -- A · Aᴴ = α • gramA = α • I.
   have h_A_AH : Θ.A a * (Θ.A a).conjTranspose = frobNormSq (Θ.A a) • (1 : Matrix (Fin n) (Fin n) ℂ) := by
     rw [ActiveSubspaceGeneric.M_mul_conjTranspose_eq_smul_gramOf (Θ.A a) (hnd.A_pos a)]
@@ -594,18 +594,18 @@ theorem unitary_rescaleByNorm_A_of_kappa_one (Θ : HCParams n) (f : BinOp n)
 
 /-! ## Unitarity of rescaled C under κ=1 -/
 
-/-- Under κ=1, `(1/γ) · Cᴴ · C = 1` (from shared_gram_matrices). -/
+/-- Under κ=1, `(1/γ) · Cᴴ · C = 1` (from lemma2_shared_gram_matrices). -/
 theorem invFrobNormSq_C_conjTranspose_C_eq_one (Θ : HCParams n) (f : BinOp n)
     (hq : IsQuasigroup f) (hnd : Nondegenerate Θ)
     (hcol : PerfectCollinearity Θ f) (hfeas : Factorizes Θ f)
     (hκ : ∀ a b : Fin n, kappaTriple Θ a b (f.op a b) = 1)
     (c : Fin n) :
     (1 / frobNormSq (Θ.C c)) • ((Θ.C c).conjTranspose * Θ.C c) = 1 := by
-  -- From shared_gram_matrices: ∀ c, (1/γ) Cᴴ C = X. From kappa_one_iff_unitary:
-  -- gramA Θ a = 1. By shared_gram_matrices, gramA Θ a = X. So X = 1.
-  obtain ⟨X, hgA, hgC⟩ := shared_gram_matrices Θ f hq hnd hcol hfeas
+  -- From lemma2_shared_gram_matrices: ∀ c, (1/γ) Cᴴ C = X. From lemma3_kappa_one_iff_unitary:
+  -- gramA Θ a = 1. By lemma2_shared_gram_matrices, gramA Θ a = X. So X = 1.
+  obtain ⟨X, hgA, hgC⟩ := lemma2_shared_gram_matrices Θ f hq hnd hcol hfeas
   have hgA1 : gramA Θ ⟨0, NeZero.pos n⟩ = 1 :=
-    kappa_one_iff_unitary Θ f hq hnd hcol hfeas hκ _
+    lemma3_kappa_one_iff_unitary Θ f hq hnd hcol hfeas hκ _
   have hX1 : X = 1 := by rw [← hgA ⟨0, NeZero.pos n⟩]; exact hgA1
   rw [hgC c, hX1]
 

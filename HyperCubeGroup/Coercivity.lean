@@ -691,11 +691,11 @@ theorem misalignmentPenalty_unitaryConjAction (U : Matrix (Fin n) (Fin n) ℂ)
   have h_ip : inverseScalePenalty (unitaryConjAction U Θ) f = inverseScalePenalty Θ f :=
     inverseScalePenalty_unitaryConjAction U hU Θ f
   have h_dec : objective Θ f = inverseScalePenalty Θ f + misalignmentPenalty Θ f :=
-    decomposition Θ f hnd
+    lemma1_decomposition Θ f hnd
   have h_dec' : objective (unitaryConjAction U Θ) f =
       inverseScalePenalty (unitaryConjAction U Θ) f +
       misalignmentPenalty (unitaryConjAction U Θ) f :=
-    decomposition (unitaryConjAction U Θ) f hnd'
+    lemma1_decomposition (unitaryConjAction U Θ) f hnd'
   -- Combining: ip + misalign' = obj' = obj = ip + misalign, hence misalign' = misalign.
   have key : inverseScalePenalty Θ f + misalignmentPenalty (unitaryConjAction U Θ) f =
       inverseScalePenalty Θ f + misalignmentPenalty Θ f := by
@@ -1302,11 +1302,11 @@ theorem misalignmentPenalty_uniformScale_cubeRoot (t : ℂ) (ht : t ^ 3 = 1)
   have h_ip : inverseScalePenalty (uniformScale t Θ) f = inverseScalePenalty Θ f :=
     inverseScalePenalty_uniformScale_cubeRoot t ht Θ f
   have h_dec : objective Θ f = inverseScalePenalty Θ f + misalignmentPenalty Θ f :=
-    decomposition Θ f hnd
+    lemma1_decomposition Θ f hnd
   have h_dec' : objective (uniformScale t Θ) f =
       inverseScalePenalty (uniformScale t Θ) f +
       misalignmentPenalty (uniformScale t Θ) f :=
-    decomposition (uniformScale t Θ) f hnd'
+    lemma1_decomposition (uniformScale t Θ) f hnd'
   -- Combine: ip + misalign' = obj' = obj = ip + misalign, hence misalign' = misalign.
   have key : inverseScalePenalty Θ f + misalignmentPenalty (uniformScale t Θ) f =
       inverseScalePenalty Θ f + misalignmentPenalty Θ f := by
@@ -1481,11 +1481,11 @@ theorem misalignmentPenalty_unit_gauge (sA sB sC : Fin n → ℂ)
   have h_ip : inverseScalePenalty (gaugeAction sA sB sC Θ) f = inverseScalePenalty Θ f :=
     inverseScalePenalty_unit_gauge sA sB sC hA hB hC Θ f
   have h_dec : objective Θ f = inverseScalePenalty Θ f + misalignmentPenalty Θ f :=
-    decomposition Θ f hnd
+    lemma1_decomposition Θ f hnd
   have h_dec' : objective (gaugeAction sA sB sC Θ) f =
       inverseScalePenalty (gaugeAction sA sB sC Θ) f +
       misalignmentPenalty (gaugeAction sA sB sC Θ) f :=
-    decomposition (gaugeAction sA sB sC Θ) f hnd'
+    lemma1_decomposition (gaugeAction sA sB sC Θ) f hnd'
   have key : inverseScalePenalty Θ f + misalignmentPenalty (gaugeAction sA sB sC Θ) f =
       inverseScalePenalty Θ f + misalignmentPenalty Θ f := by
     calc inverseScalePenalty Θ f + misalignmentPenalty (gaugeAction sA sB sC Θ) f
@@ -2677,7 +2677,7 @@ theorem inverseScalePenalty_re_lower_bound_on_combinedGaugeOrbit
 /-- AM-GM lower bound at the level of the feasibility-preserving gauge quotient:
     for a UnitaryCollinear factorisation, the (lifted) inverseScalePenalty's real part
     is at least `3n²`. -/
-theorem amgm_lower_bound_feasibleQuotient {f : BinOp n} (hq : _root_.IsQuasigroup f)
+theorem lemma6_collinear_lower_bound_feasibleQuotient {f : BinOp n} (hq : _root_.IsQuasigroup f)
     (q : FeasibleCombinedGaugeQuotient n f)
     (huc : FeasibleCombinedGaugeQuotient.UnitaryCollinear q) :
     3 * (n : ℝ) ^ 2 ≤ (FeasibleCombinedGaugeQuotient.inverseScalePenalty q).re := by
@@ -2691,7 +2691,7 @@ theorem amgm_lower_bound_feasibleQuotient {f : BinOp n} (hq : _root_.IsQuasigrou
       A_pos := fun a => by rw [frobNormSq_unitary_eq_one _ (huc'.unitaryA a)]; exact one_ne_zero,
       B_pos := fun b => by rw [frobNormSq_unitary_eq_one _ (huc'.unitaryB b)]; exact one_ne_zero,
       C_pos := fun c => by rw [frobNormSq_unitary_eq_one _ (huc'.unitaryC c)]; exact one_ne_zero }
-    exact amgm_lower_bound Θ f hq hnd huc'.collinear huc'.feasible
+    exact lemma6_collinear_lower_bound Θ f hq hnd huc'.collinear huc'.feasible
 
 /-! ## Gauge actions on the zero element -/
 
@@ -3596,7 +3596,7 @@ theorem unitaryCollinear_inverseScalePenalty_eq_three_n_sq_feasibleQuotient
       C_pos := fun c => by rw [frobNormSq_unitary_eq_one _ (huc'.unitaryC c)]; exact one_ne_zero }
     have h_dec : _root_.objective Θ f =
         _root_.inverseScalePenalty Θ f + _root_.misalignmentPenalty Θ f :=
-      decomposition Θ f hnd
+      lemma1_decomposition Θ f hnd
     have h_misalign : _root_.misalignmentPenalty Θ f = 0 := huc'.collinear
     have h_obj_eq_ip : _root_.objective Θ f = _root_.inverseScalePenalty Θ f := by
       rw [h_dec, h_misalign, add_zero]
@@ -3631,7 +3631,7 @@ theorem inverseScalePenalty_re_ge_3nsq_feasibleQuotient
     (q : FeasibleCombinedGaugeQuotient n f)
     (huc : FeasibleCombinedGaugeQuotient.UnitaryCollinear q) :
     3 * (n : ℝ) ^ 2 ≤ (FeasibleCombinedGaugeQuotient.inverseScalePenalty q).re :=
-  amgm_lower_bound_feasibleQuotient hq q huc
+  lemma6_collinear_lower_bound_feasibleQuotient hq q huc
 
 /-- For UC quotient classes, both `objective.re` and `inverseScalePenalty.re` equal `3n²`. -/
 theorem unitaryCollinear_objective_inverseScalePenalty_both_eq_3nsq_feasibleQuotient
@@ -3992,7 +3992,7 @@ theorem inverseScalePenalty_le_objective_feasibleQuotient
     have hnd := factorizes_implies_nondegenerate Θ f hq hfeas
     have hdec : _root_.objective Θ f =
         _root_.inverseScalePenalty Θ f + _root_.misalignmentPenalty Θ f :=
-      decomposition Θ f hnd
+      lemma1_decomposition Θ f hnd
     have hR_re_nn : 0 ≤ (_root_.misalignmentPenalty Θ f).re := by
       have := misalignmentPenalty_nonneg Θ f
       exact this

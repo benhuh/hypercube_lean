@@ -579,7 +579,7 @@ theorem lemma1_decomposition (Θ : HCParams n) (f : BinOp n) (hnd : Nondegenerat
 theorem lemma1_objective_ge_inverseScalePenalty (Θ : HCParams n) (f : BinOp n)
     (hnd : Nondegenerate Θ) :
     (objective Θ f).re ≥ (inverseScalePenalty Θ f).re := by
-  have hdecomp := decomposition Θ f hnd
+  have hdecomp := lemma1_decomposition Θ f hnd
   have hRnonneg := misalignmentPenalty_nonneg Θ f
   rw [hdecomp]
   simp only [Complex.add_re]

@@ -522,7 +522,7 @@ noncomputable def rescaleByNorm (Θ : HCParams n) : HCParams n where
 Full proof requires: shared Gram matrices (Lemma 2), normalized rank κ = 1
     (Lemma 3), and norm rescaling to achieve unitarity (Section 4.1).
 Status: the κ = 1 case can be discharged via `rescaleByNorm` and the
-    existing `kappa_one_iff_unitary`.
+    existing `lemma3_kappa_one_iff_unitary`.
 The general case (κ < 1) requires
     the active-subspace machinery; remains axiomatised.
 -/
@@ -1300,9 +1300,9 @@ theorem theorem7_optimality_within_collinear_manifold (f : BinOp n)
   intro Θ hcol hfeas
   have hnd := factorizes_implies_nondegenerate Θ f hq hfeas
   -- On collinear manifold: objective = inverseScalePenalty + 0 = inverseScalePenalty
-  have hdecomp := decomposition Θ f hnd
+  have hdecomp := lemma1_decomposition Θ f hnd
   have hR_zero : misalignmentPenalty Θ f = 0 := hcol
   rw [hdecomp, hR_zero, add_zero]
-  exact amgm_lower_bound Θ f hq hnd hcol hfeas
+  exact lemma6_collinear_lower_bound Θ f hq hnd hcol hfeas
 
 end
