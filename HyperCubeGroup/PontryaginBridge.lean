@@ -339,7 +339,7 @@ theorem frobNormSq_diagRep (chars : Fin n → Character f) (g : Fin n) :
     frobNormSq (diagRep chars g) = 1 :=
   frobNormSq_unitary_eq_one _ (diagRep_unitary chars g)
 
-/-- The collinear identity idA for diagRep: `B · C = A^H` (T/α = 1).
+/-- The collinear identity idA for diagRep: `B · C = A†` (T/α = 1).
     Holds for `c = f.op a b` and abelian/group `f`. -/
 theorem diagRep_collinearA (chars : Fin n → Character f) (a b : Fin n) :
     let c := f.op a b
@@ -368,7 +368,7 @@ theorem diagRep_collinearA (chars : Fin n → Character f) (a b : Fin n) :
       ((chars i).val b * star ((chars i).val b)) * star ((chars i).val a) from by ring]
   rw [hunit, one_mul]
 
-/-- The collinear identity idB for diagRep: `C · A = B^H` (T/β = 1). -/
+/-- The collinear identity idB for diagRep: `C · A = B†` (T/β = 1). -/
 theorem diagRep_collinearB (chars : Fin n → Character f) (a b : Fin n) :
     let c := f.op a b
     (diagRep chars c).conjTranspose * diagRep chars a =
@@ -390,8 +390,8 @@ theorem diagRep_collinearB (chars : Fin n → Character f) (a b : Fin n) :
       ((chars i).val a * star ((chars i).val a)) * star ((chars i).val b) from by ring]
   rw [hunit, one_mul]
 
-/-- The collinear identity idC for diagRep with `Θ.C c := (diagRep c)^H`:
-    `A · B = (Θ.C c)^H = diagRep c` (T/γ = 1). -/
+/-- The collinear identity idC for diagRep with `Θ.C c := (diagRep c)†`:
+    `A · B = (Θ.C c)† = diagRep c` (T/γ = 1). -/
 theorem diagRep_collinearC (chars : Fin n → Character f) (a b : Fin n) :
     let c := f.op a b
     diagRep chars a * diagRep chars b =

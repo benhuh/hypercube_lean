@@ -842,7 +842,7 @@ The κ<1 case requires the manuscript's coordinated active-subspace argument:
      direct sum.
 
 This is a multi-day sub-project. The generic active-subspace machinery
-in `ActiveSubspaceGeneric.lean` provides steps 1-3 (polar form `M = U·D·Q^H`,
+in `ActiveSubspaceGeneric.lean` provides steps 1-3 (polar form `M = U·D·Q†`,
 extended ONB, unitarity of Q). Steps 4-6 require new machinery for the
 auxiliary structure and direct-sum verification. -/
 

@@ -1716,9 +1716,9 @@ theorem combinedGauge_inv (U : Matrix (Fin n) (Fin n) ℂ)
       (fun a => (sA a)⁻¹) (fun b => (sB b)⁻¹) (fun c => (sC c)⁻¹)
       (combinedGauge U sA sB sC Θ) = Θ := by
   unfold combinedGauge
-  -- Apply comm: gaugeAction (s⁻¹) (unitaryConjAction U^H (...)) = unitaryConjAction U^H (gaugeAction (s⁻¹) (...))
+  -- Apply comm: gaugeAction (s⁻¹) (unitaryConjAction U† (...)) = unitaryConjAction U† (gaugeAction (s⁻¹) (...))
   rw [← gaugeAction_unitaryConjAction_comm]
-  -- = unitaryConjAction U^H (unitaryConjAction U (gaugeAction (s⁻¹) (gaugeAction s Θ)))
+  -- = unitaryConjAction U† (unitaryConjAction U (gaugeAction (s⁻¹) (gaugeAction s Θ)))
   rw [unitaryConjAction_inv U hU, gaugeAction_inv sA sB sC hA hB hC]
 
 /-! ## combinedGauge orbit -/
@@ -3473,7 +3473,7 @@ theorem cocycle_of_factorizes_combinedGauge (U : Matrix (Fin n) (Fin n) ℂ)
   -- Inverse: combinedGauge feasibility implies gaugeAction feasibility (unitary
   -- preserves Factorizes both ways).
   have hUH : U.conjTranspose * U = 1 := mul_eq_one_comm.mp hU
-  -- Apply unitaryConjAction U^H to combinedGauge U sA sB sC Θ.
+  -- Apply unitaryConjAction U† to combinedGauge U sA sB sC Θ.
   have h_inv : unitaryConjAction U.conjTranspose (combinedGauge U sA sB sC Θ) =
       gaugeAction sA sB sC Θ := by
     unfold combinedGauge
@@ -3892,7 +3892,7 @@ theorem factorizes_combinedGauge_of_cocycle_iff (U : Matrix (Fin n) (Fin n) ℂ)
     Factorizes (combinedGauge U sA sB sC Θ) f ↔ Factorizes Θ f := by
   refine ⟨?_, ?_⟩
   · intro h_gauge
-    -- Use the inverse gauge: combinedGauge U^H s⁻¹ undoes the action.
+    -- Use the inverse gauge: combinedGauge U† s⁻¹ undoes the action.
     have h_inv : Θ = combinedGauge U.conjTranspose
         (fun a => (sA a)⁻¹) (fun b => (sB b)⁻¹) (fun c => (sC c)⁻¹)
         (combinedGauge U sA sB sC Θ) :=
