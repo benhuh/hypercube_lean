@@ -4,55 +4,46 @@
   The bidirectional characterization:
   Collinear Factorization ↔ Group Isotope (Section 4).
 
-  Main results (manuscript numbering follows `Neurips_body_combined.tex` /
-  `Neurips_Appendix_Combined.tex`):
+  Main results:
   - Lemma 11 (Synchronization): unitary collinear → synchronized gauge A'=B'=(C')†
-  - Lemma 12 (Homomorphism & Injectivity): synchronized map ρ: Q → U(n)
-  - Theorem 4: Unitary collinearity ⟺ group isotope
-  - Theorem 5: General collinearity ⟺ group isotope
-  - Lemma 14: Group isotope ⟹ unitary collinear factorization (via left-regular rep)
-  - Lemma 13: Uniqueness of representation (character theory)
+  - Lemma 12 (Homomorphism and Injectivity): synchronized map ρ: Q → U(n)
+  - Theorem 4 (Unitary Collinearity ⟺ Group Isotope)
+  - Theorem 5 (General Collinearity ⟺ Group Isotope)
+  - Lemma 13 (Uniqueness of Representation)
+  - Lemma 14 (Sufficiency: Group Isotope ⟹ Unitary Collinear Factorization)
 
   Also, derived from `MatrixAMGM`:
-  - `weakDominance_general`: H ≥ 3n² for any feasible Θ on any binary op.
-  - `dominanceEquality_general`: equality H = 3n² forces unitary slices
-    with `A_a B_b C_{f(a,b)} = I` at every supported triple.
-  - `dominance_equality_implies_perfect_collinearity`: H = 3n² ⟹ R = 0.
-  - `strict_gap_non_group`: for non-group quasigroups, H > 3n² strictly.
-    Now unconditional (was conditional on `strongCollinearityDominance`,
-    which has been removed).
+  - `universal_lower_bound_general`: ℋ(Θ) ≥ 3|δ| for any feasible Θ on any binary op.
+  - `equality_rigidity_general`: equality ℋ(Θ) = 3|δ| forces unitary slices
+    with `A_a B_b C_c = I_n` at every supported triple.
+  - `equality_rigidity_implies_perfect_collinearity`: ℋ(Θ) = 3|δ| ⟹ ℛ_δ = 0.
+  - `strict_gap_non_group`: for non-group quasigroups, H > 3|δ| strictly.
+  Now unconditional.
 
   ## Manuscript-numbered axiom-free landscape theorems
 
   All of these have `#print axioms ⟹ [propext, Classical.choice, Quot.sound]`,
   i.e., they do NOT depend on the open `collinear_to_unitary_collinear`
-  axiom. The single open axiom only affects Theorem 5 (the rank-deficient
+  axiom.
+  The single open axiom only affects Theorem 5 (the rank-deficient
   general collinearity ⟺ group isotope) — not the headline results below.
 
-  - `theorem4_unitary_collinearity_iff_group_isotope` (Theorem 4)
-  - `theorem8_universal_lower_bound`                  (Theorem 9 lower-bound half:
-                                                       H ≥ 3n² for feasible Θ)
-  - `theorem9_equality_rigidity`                       (Theorem 9 rigidity half:
-                                                       H = 3n² ⟺ UC for feasible Θ)
-  - `theorem10_global_optimality`                      (Theorem 10: dichotomy)
-  - `strict_gap_non_group_unconditional`               (Theorem 10 Case 2)
-
-  Note on identifier names: `theorem8_*` and `theorem9_*` reflect a prior
-  manuscript numbering in which the lower bound and equality rigidity were
-  two separate theorems. In the current `Neurips_body_combined.tex` they
-  are bundled as the two halves of Theorem 9 (Absolute Feasible Bound).
-  The identifiers are kept stable for external references.
+  - `theorem4_unitary_collinearity_iff_group_isotope` (Theorem 4: Unitary Collinearity ⟺ Group Isotope)
+  - `theorem9_absolute_feasible_bound_lower`          (Theorem 9 lower-bound half: H ≥ 3|δ| for feasible Θ)
+  - `theorem9_absolute_feasible_bound_rigidity`       (Theorem 9 rigidity half: H = 3|δ| ⟺ UC for feasible Θ)
+  - `theorem10_global_optimality_dichotomy`           (Theorem 10: Global Optimality and Associativity Gap)
+  - `strict_gap_non_group_unconditional`              (Theorem 10 Case 2)
 
   Plus, in `Tikhonov.lean`:
-  - `theorem16_tikhonov_existence`                    (Theorem 27: existence)
+  - `theorem18_regularized_existence`                 (Theorem 18: existence)
 
   Plus, in `MatrixAMGM.lean`:
-  - `lemma28_matrix_amgm`                             (Lemma 16: Matrix AM-GM)
-  - `lemma28_matrix_amgm_equality`                    (Lemma 16: equality side)
+  - `lemma16_matrix_amgm`                             (Lemma 16: Matrix AM-GM)
+  - `lemma16_matrix_amgm_equality`                    (Lemma 16: equality side)
 
   Plus, in `Coercivity.lean` at the gauge quotient level:
-  - `theorem8_universal_lower_bound_feasibleQuotient`
-  - `strict_gap_non_group_feasibleQuotient`
+  - `theorem9_absolute_feasible_bound_lower_feasibleQuotient`
+  - `theorem10_case2_strict_gap_non_group_feasibleQuotient`
   - `isOptimal_iff_unitaryCollinear_feasibleQuotient`
   - `exists_isOptimal_iff_group_isotope_feasibleQuotient`
   - `feasibleQuotient_optimal_or_strict`
@@ -67,23 +58,28 @@ noncomputable section
 
 variable {n : ℕ} [NeZero n]
 
-/-! ## Quasigroup isotopes and loops -/
+/-!
+## Quasigroup isotopes and loops -/
 
 /-- Two binary operations are isotopic if they differ by a triple of bijections:
-    a ∘' b = χ(φ⁻¹(a) ∘ ψ⁻¹(b)). -/
+    a ∘' b = χ(φ⁻¹(a) ∘ ψ⁻¹(b)).
+-/
 def IsIsotopic (f g : BinOp n) : Prop :=
   ∃ φ ψ χ : Equiv.Perm (Fin n),
     ∀ a b : Fin n, g.op a b = χ (f.op (φ.symm a) (ψ.symm b))
 
-/-- A quasigroup is a group isotope if it is isotopic to some group. -/
+/-- A quasigroup is a group isotope if it is isotopic to some group.
+-/
 def IsGroupIsotope (f : BinOp n) : Prop :=
   ∃ g : BinOp n, IsAssociative g ∧ IsIsotopic g f
 
-/-- A loop is a quasigroup with a two-sided identity element. -/
+/-- A loop is a quasigroup with a two-sided identity element.
+-/
 structure IsLoop (f : BinOp n) extends IsQuasigroup f : Prop where
   identity : ∃ e : Fin n, ∀ a : Fin n, f.op e a = a ∧ f.op a e = a
 
-/-- Every finite quasigroup is isotopic to a loop (Pflugfelder, 1990). -/
+/-- Every finite quasigroup is isotopic to a loop (Pflugfelder, 1990).
+-/
 theorem quasigroup_isotopic_to_loop (f : BinOp n) (hq : IsQuasigroup f) :
     ∃ g : BinOp n, IsLoop g ∧ IsIsotopic f g := by
   have ⟨e⟩ : Nonempty (Fin n) := ⟨⟨0, NeZero.pos n⟩⟩
@@ -112,7 +108,8 @@ theorem quasigroup_isotopic_to_loop (f : BinOp n) (hq : IsQuasigroup f) :
         rw [this]; exact R_e.apply_symm_apply a
   · exact ⟨R_e, L_e, 1, fun a b => by simp [g]⟩
 
-/-! ## Lemma 11: Synchronization -/
+/-!
+## Lemma 11: Synchronization -/
 
 structure Synchronized (Θ : HCParams n) (f : BinOp n) where
   rho : Fin n → Matrix (Fin n) (Fin n) ℂ
@@ -121,9 +118,11 @@ structure Synchronized (Θ : HCParams n) (f : BinOp n) where
   eq_C : ∀ g : Fin n, Θ.C g = (rho g).conjTranspose
   unitary : ∀ g : Fin n, rho g * (rho g).conjTranspose = 1
 
-/-! ### Helper lemmas for synchronization and homomorphism -/
+/-!
+### Helper lemmas for synchronization and homomorphism -/
 
-/-- Product of two unitary matrices is unitary. -/
+/-- Product of two unitary matrices is unitary.
+-/
 private theorem mul_unitary_unitary (A B : Matrix (Fin n) (Fin n) ℂ)
     (hA : A * A.conjTranspose = 1) (hB : B * B.conjTranspose = 1) :
     (A * B) * (A * B).conjTranspose = 1 := by
@@ -132,14 +131,16 @@ private theorem mul_unitary_unitary (A B : Matrix (Fin n) (Fin n) ℂ)
     rw [← Matrix.mul_assoc, hB, Matrix.one_mul]
   rw [Matrix.mul_assoc, h1, hA]
 
-/-- conjTranspose of unitary is unitary. -/
+/-- conjTranspose of unitary is unitary.
+-/
 private theorem conjTranspose_unitary (A : Matrix (Fin n) (Fin n) ℂ)
     (hA : A * A.conjTranspose = 1) :
     A.conjTranspose * A.conjTranspose.conjTranspose = 1 := by
   rw [Matrix.conjTranspose_conjTranspose]; exact mul_eq_one_comm.mp hA
 
 /-- A unitary matrix whose normalized trace equals 1 must be the identity.
-    Key insight: ‖M - I‖² = 2 - (2/n)Re(Tr(M)) = 0 when Tr(M) = n. -/
+Key insight: ‖M - I‖² = 2 - (2/n)Re(Tr(M)) = 0 when Tr(M) = n.
+-/
 private theorem unitary_trace_n_eq_one (M : Matrix (Fin n) (Fin n) ℂ)
     (hunit : M * M.conjTranspose = 1)
     (htrace : (1 / (n : ℂ)) * M.trace = 1) :
@@ -168,8 +169,9 @@ private theorem unitary_trace_n_eq_one (M : Matrix (Fin n) (Fin n) ℂ)
   ring
 
 /-- Synchronization: Given UnitaryCollinear Θ f and f a loop with identity e,
-    construct a synchronized Θ' by gauge-transforming via A_e†. -/
-theorem synchronization (Θ : HCParams n) (f : BinOp n)
+    construct a synchronized Θ' by gauge-transforming via A_e†.
+-/
+theorem lemma11_synchronization (Θ : HCParams n) (f : BinOp n)
     (hloop : IsLoop f) (huc : UnitaryCollinear Θ f) :
     ∃ (Θ' : HCParams n), Nonempty (Synchronized Θ' f) := by
   -- Construct ρ(g) = A_e† * A_g
@@ -189,16 +191,17 @@ theorem synchronization (Θ : HCParams n) (f : BinOp n)
       exact mul_eq_one_comm.mp (huc.unitaryA _)
   }⟩⟩
 
-/-! ## Lemma 12: Homomorphism and Injectivity -/
+/-!
+## Lemma 12: Homomorphism and Injectivity -/
 
-theorem synchronized_homomorphism (Θ : HCParams n) (f : BinOp n)
+theorem lemma12_synchronized_homomorphism (Θ : HCParams n) (f : BinOp n)
     (hloop : IsLoop f) (hsync : Synchronized Θ f) (hfeas : Factorizes Θ f) :
     (∀ a b : Fin n, hsync.rho a * hsync.rho b = hsync.rho (f.op a b)) := by
   intro a b
   let ρ := hsync.rho
   let c := f.op a b
   -- Strategy: show M = ρ(a) * ρ(b) * ρ(c)† is unitary with trace/n = 1,
-  -- hence M = I, hence ρ(a) * ρ(b) = ρ(c).
+  -- hence M = I_n, hence ρ(a) * ρ(b) = ρ(c).
   set M := ρ a * ρ b * (ρ c).conjTranspose with hM_def
   -- M is unitary (product of unitaries)
   have hunit_M : M * M.conjTranspose = 1 := by
@@ -227,7 +230,7 @@ theorem synchronized_homomorphism (Θ : HCParams n) (f : BinOp n)
     _ = M * ρ c := by rw [hM_def]; simp only [Matrix.mul_assoc]
     _ = ρ c := this
 
-theorem synchronized_injective (Θ : HCParams n) (f : BinOp n)
+theorem lemma12_synchronized_injective (Θ : HCParams n) (f : BinOp n)
     (hloop : IsLoop f) (hsync : Synchronized Θ f) (hfeas : Factorizes Θ f) :
     Function.Injective hsync.rho := by
   intro x y hρ
@@ -243,9 +246,11 @@ theorem synchronized_injective (Θ : HCParams n) (f : BinOp n)
   have ⟨b⟩ : Nonempty (Fin n) := ⟨⟨0, NeZero.pos n⟩⟩
   exact (hloop.toIsQuasigroup.right_cancel b).1 (hrow b)
 
-/-! ## Theorems 7 and 12 -/
+/-!
+## Theorems 4 and 5 Helper Lemmas -/
 
-/-- Helper: a loop with UnitaryCollinear factorization is a group. -/
+/-- Helper: a loop with UnitaryCollinear factorization is a group.
+-/
 private theorem loop_uc_associative (f : BinOp n)
     (hloop : IsLoop f) (Θ : HCParams n) (huc : UnitaryCollinear Θ f) :
     IsAssociative f := by
@@ -306,7 +311,7 @@ private theorem loop_uc_associative (f : BinOp n)
     have h := hcomm b -- A_e * B_b = A_b * B_e
     -- Left-multiply by A_e†
     have hAe_inv : (Θ.A e).conjTranspose * Θ.A e = 1 :=
-      mul_eq_one_comm.mp (huc.unitaryA e)
+       mul_eq_one_comm.mp (huc.unitaryA e)
     calc Θ.B b
         = 1 * Θ.B b := (Matrix.one_mul _).symm
       _ = ((Θ.A e).conjTranspose * Θ.A e) * Θ.B b := by rw [hAe_inv]
@@ -327,7 +332,7 @@ private theorem loop_uc_associative (f : BinOp n)
       exact this
     calc Θ.A a * ((Θ.A e).conjTranspose * Θ.A b) * Θ.B e
         = Θ.A a * ((Θ.A e).conjTranspose * Θ.A b * Θ.B e) := by
-          rw [Matrix.mul_assoc]
+           rw [Matrix.mul_assoc]
       _ = Θ.A a * Θ.B b := by rw [← hB_eq b]
       _ = Θ.A (f.op a b) * Θ.B e := hidC' a b
   -- Step 3: ρ(a) * ρ(b) = ρ(a ∘ b) where ρ(g) = A_e† * A_g
@@ -364,7 +369,8 @@ private theorem loop_uc_associative (f : BinOp n)
       Matrix.mul_assoc, hρ_hom b c, hρ_hom a (f.op b c)]
 
 /-- Transfer UnitaryCollinear across isotopy (isotope transforms preserve
-    unitarity and collinearity). -/
+    unitarity and collinearity).
+-/
 private theorem uc_isotope_transfer (f g : BinOp n)
     (_hqf : IsQuasigroup f) (hiso : IsIsotopic f g)
     (hexists : ∃ Θ : HCParams n, UnitaryCollinear Θ f) :
@@ -495,29 +501,31 @@ active-subspace construction from manuscript Appendix E:
   1. Restrict each `A_a, B_b, C_c` to the column space of the shared
      Gram matrix `X` (the active subspace, dim = κn).
   2. On the active subspace, `A_a / √α_a` is unitary (since
-     `A_a A_aᴴ = α_a • X` and `X = I` on the active subspace).
+     `A_a A_aᴴ = α_a • X` and `X = I_n` on the active subspace).
   3. Extend the partial isometry on the active subspace to a full
      unitary on `ℂⁿ` via Gram-Schmidt, picking arbitrary unitary on
      the orthogonal complement.
-
 This requires roughly 500-1000 lines of new Lean (orthogonal projection,
-active subspace lemmas, partial isometry extension). The unitarity-
-preserving rescaling helper is below as a building block. -/
+active subspace lemmas, partial isometry extension).
+The unitarity-preserving rescaling helper is below as a building block.
+-/
 
 /-- Rescale a parameter triple so each slice has unit Frobenius norm
-    squared. The scaling factor is `1 / √(‖slice‖²)`. -/
+    squared.
+The scaling factor is `1 / √(‖slice‖²)`. -/
 noncomputable def rescaleByNorm (Θ : HCParams n) : HCParams n where
   A a := ((Real.sqrt (frobNormSq (Θ.A a)).re)⁻¹ : ℂ) • Θ.A a
   B b := ((Real.sqrt (frobNormSq (Θ.B b)).re)⁻¹ : ℂ) • Θ.B b
   C c := ((Real.sqrt (frobNormSq (Θ.C c)).re)⁻¹ : ℂ) • Θ.C c
 
 /-- Collinear + feasible + nondegenerate → ∃ unitary collinear factorization.
-    Full proof requires: shared Gram matrices (Lemma 2), normalized rank κ = 1
+Full proof requires: shared Gram matrices (Lemma 2), normalized rank κ = 1
     (Lemma 3), and norm rescaling to achieve unitarity (Section 4.1).
-
-    Status: the κ = 1 case can be discharged via `rescaleByNorm` and the
-    existing `kappa_one_iff_unitary`. The general case (κ < 1) requires
-    the active-subspace machinery; remains axiomatised. -/
+Status: the κ = 1 case can be discharged via `rescaleByNorm` and the
+    existing `kappa_one_iff_unitary`.
+The general case (κ < 1) requires
+    the active-subspace machinery; remains axiomatised.
+-/
 private axiom collinear_to_unitary_collinear (f : BinOp n) (hq : IsQuasigroup f)
     (Θ : HCParams n) (hcol : PerfectCollinearity Θ f) (hfeas : Factorizes Θ f)
     (hnd : Nondegenerate Θ) :
@@ -532,7 +540,8 @@ theorem collinear_implies_group_isotope (f : BinOp n)
   obtain ⟨Θ', huc⟩ := collinear_to_unitary_collinear f hq Θ hcol hfeas hnd
   exact unitary_collinear_implies_group_isotope f hq ⟨Θ', huc⟩
 
-/-! ## Lemma 14: Group Isotope ⟹ Unitary Collinear Factorization -/
+/-!
+## Lemma 14: Sufficiency: Group Isotope ⟹ Unitary Collinear Factorization -/
 
 def leftRegularRep (f : BinOp n) : Fin n → Matrix (Fin n) (Fin n) ℂ :=
   fun g => Matrix.of (fun i j : Fin n => if f.op g j = i then (1 : ℂ) else 0)
@@ -583,7 +592,8 @@ theorem leftRegularRep_hom (f : BinOp n) (hq : IsQuasigroup f)
     exact this
   · rw [hassoc a b j]
 
-/-! ### Helper lemmas -/
+/-!
+### Helper lemmas -/
 
 theorem isotopy_source_quasigroup (g f : BinOp n)
     (hqf : IsQuasigroup f) (hiso : IsIsotopic g f) :
@@ -671,7 +681,8 @@ theorem isotopeTransform_factorizes (Θ : HCParams n) (g f : BinOp n)
     simp [hg, hc]
 
 /-- Helper: for the left-regular representation with C_c = ρ(c)†,
-    the product B_b * C_c on support triples simplifies. -/
+    the product B_b * C_c on support triples simplifies.
+-/
 private theorem leftReg_BC_eq_conjTranspose_A (g : BinOp n) (hq : IsQuasigroup g)
     (hassoc : IsAssociative g) (a b : Fin n) :
     let ρ := leftRegularRep g
@@ -688,7 +699,8 @@ private theorem leftReg_BC_eq_conjTranspose_A (g : BinOp n) (hq : IsQuasigroup g
     _ = 1 * (ρ a).conjTranspose := by rw [hunit]
     _ = (ρ a).conjTranspose := Matrix.one_mul _
 
-/-- Helper: for the left-regular representation, C_c * A_a on support. -/
+/-- Helper: for the left-regular representation, C_c * A_a on support.
+-/
 private theorem leftReg_CA_eq_conjTranspose_B (g : BinOp n) (hq : IsQuasigroup g)
     (hassoc : IsAssociative g) (a b : Fin n) :
     let ρ := leftRegularRep g
@@ -706,8 +718,8 @@ private theorem leftReg_CA_eq_conjTranspose_B (g : BinOp n) (hq : IsQuasigroup g
         rw [mul_eq_one_comm.mp hunit]
     _ = (ρ b).conjTranspose := Matrix.mul_one _
 
-/-- **Lemma 14 (Group Isotope ⟹ Unitary Collinear Factorization).** -/
-theorem group_isotope_admits_unitary_collinear (f : BinOp n)
+/-- **Lemma 14 (Sufficiency: Group Isotope ⟹ Unitary Collinear Factorization).** -/
+theorem lemma14_group_isotope_admits_unitary_collinear (f : BinOp n)
     (hq : IsQuasigroup f) (hgi : IsGroupIsotope f) :
     ∃ Θ : HCParams n, UnitaryCollinear Θ f := by
   obtain ⟨g, hassoc, φ, ψ, χ, hiso⟩ := hgi
@@ -810,15 +822,16 @@ theorem collinear_iff_group_isotope (f : BinOp n) (hq : IsQuasigroup f) :
   constructor
   · exact collinear_implies_group_isotope f hq
   · intro hgi
-    obtain ⟨Θ, huc⟩ := group_isotope_admits_unitary_collinear f hq hgi
+    obtain ⟨Θ, huc⟩ := lemma14_group_isotope_admits_unitary_collinear f hq hgi
     exact ⟨Θ, huc.collinear, huc.feasible,
            ⟨fun a => frobNormSq_unitary_ne_zero _ (huc.unitaryA a),
             fun b => frobNormSq_unitary_ne_zero _ (huc.unitaryB b),
             fun c => frobNormSq_unitary_ne_zero _ (huc.unitaryC c)⟩⟩
 
-/-! ## Lemma 13: Uniqueness of Representation -/
+/-!
+## Lemma 13: Uniqueness of Representation -/
 
-theorem representation_unique (Θ : HCParams n) (f : BinOp n)
+theorem lemma13_representation_unique (Θ : HCParams n) (f : BinOp n)
     (hloop : IsLoop f) (hassoc : IsAssociative f)
     (hsync : Synchronized Θ f) (hfeas : Factorizes Θ f) :
     ∀ g : Fin n,
@@ -827,7 +840,7 @@ theorem representation_unique (Θ : HCParams n) (f : BinOp n)
   intro g
   set e := Classical.choose hloop.identity with he_def
   have he := Classical.choose_spec hloop.identity
-  have hhom := synchronized_homomorphism Θ f hloop hsync hfeas
+  have hhom := lemma12_synchronized_homomorphism Θ f hloop hsync hfeas
   have hunit := mul_eq_one_comm.mp (hsync.unitary e)
   -- ρ(e) = I: from ρ(e)² = ρ(e) and unitarity
   have hρe : hsync.rho e = 1 := by
@@ -850,22 +863,25 @@ theorem representation_unique (Θ : HCParams n) (f : BinOp n)
     rw [if_neg (fun h : e = g => heg h.symm)] at hfact
     exact star_eq_zero.mp ((mul_eq_zero.mp hfact).resolve_left hn_ne)
 
-/-! ## Global minimizer definition -/
+/-!
+## Global minimizer definition -/
 
-/-- A global minimizer of H over the feasible set. -/
+/-- A global minimizer of H over the feasible set.
+-/
 def IsGlobalMinimizer (Θ : HCParams n) (f : BinOp n) : Prop :=
   Factorizes Θ f ∧ ∀ Θ' : HCParams n, Factorizes Θ' f →
     (objective Θ f).re ≤ (objective Θ' f).re
 
-/-! ## Weak Dominance via Matrix AM–GM
+/-!
+## Universal Lower Bound via Matrix AM-GM
 
-The general weak-dominance theorems are derived from the matrix AM–GM
-lemma in `MatrixAMGM` (which axiomatises the underlying spectral fact).
-Each is unconditional in this file: they do not depend on the previous
-`strongCollinearityDominance` conjecture-axiom, which has been removed. -/
+The general universal lower bound theorems are derived from the Matrix AM-GM
+lemma in `MatrixAMGM`.
+-/
 
 /-- Per-pair feasibility on a supported triple in unnormalised form:
-    `Tr(A_a B_b C_{f.op a b}) / n = 1`. -/
+    `Tr(A_a B_b C_{f.op a b}) / n = 1`.
+-/
 private theorem hcProduct_one_on_support (Θ : HCParams n) (f : BinOp n)
     (hfeas : Factorizes Θ f) (a b : Fin n) :
     (1 / (n : ℂ)) * (Θ.A a * Θ.B b * Θ.C (f.op a b)).trace = 1 := by
@@ -885,10 +901,11 @@ private theorem objective_per_pair_ge (Θ : HCParams n) (f : BinOp n)
   rw [Complex.add_re, Complex.add_re]
   linarith
 
-/-- **Weak Dominance (any binary operation with feasibility).**
-    `H(Θ; f) ≥ 3 n²` for every feasible Θ, with no algebraic hypothesis
-    on `f` whatsoever. Direct corollary of `matrix_amgm_at_one`. -/
-theorem weakDominance_general (f : BinOp n)
+/-- **Universal Lower Bound (any binary operation with feasibility).**
+    `ℋ(Θ) ≥ 3|δ|` for every feasible Θ, with no algebraic hypothesis
+    on `f` whatsoever.
+    Direct corollary of `matrix_amgm_at_one`. -/
+theorem universal_lower_bound_general (f : BinOp n)
     (Θ : HCParams n) (hfeas : Factorizes Θ f) :
     (objective Θ f).re ≥ 3 * (n : ℝ) ^ 2 := by
   rw [objective_eq_sum_support, Complex.re_sum]
@@ -908,9 +925,10 @@ theorem weakDominance_general (f : BinOp n)
         simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin, sq]
         ring
 
-/-- Per-pair equality consequence: at `H = 3 n²`, matrix AM–GM equality
-    fires at every `(a, b)`, giving unitary slices and `A·B·C = I` on
-    every supported triple. -/
+/-- Per-pair equality consequence: at `H = 3|δ|`, matrix AM–GM equality
+    fires at every `(a, b)`, giving unitary slices and `A_a B_b C_{f(a,b)} = I_n` on
+    every supported triple.
+-/
 private theorem objective_eq_implies_per_pair_unitary
     (f : BinOp n) (Θ : HCParams n) (hfeas : Factorizes Θ f)
     (hH : (objective Θ f).re = 3 * (n : ℝ) ^ 2) :
@@ -925,7 +943,7 @@ private theorem objective_eq_implies_per_pair_unitary
        frobNormSq (Θ.A a * Θ.B b)).re = 3 := by
     have hge := fun a b => objective_per_pair_ge Θ f hfeas a b
     have hsum_eq : (∑ a : Fin n, ∑ b : Fin n,
-        (frobNormSq (Θ.B b * Θ.C (f.op a b)) +
+         (frobNormSq (Θ.B b * Θ.C (f.op a b)) +
          frobNormSq (Θ.C (f.op a b) * Θ.A a) +
          frobNormSq (Θ.A a * Θ.B b)).re) = 3 * (n : ℝ) ^ 2 := by
       have := hH
@@ -941,13 +959,13 @@ private theorem objective_eq_implies_per_pair_unitary
                 frobNormSq (Θ.A a₀ * Θ.B b₀)).re > 3 :=
       lt_of_le_of_ne (hge a₀ b₀) (Ne.symm hne₀)
     have h_inner_lb : ∀ a : Fin n,
-        (∑ _ : Fin n, (3 : ℝ)) ≤ ∑ b : Fin n,
+          (∑ _ : Fin n, (3 : ℝ)) ≤ ∑ b : Fin n,
           (frobNormSq (Θ.B b * Θ.C (f.op a b)) +
            frobNormSq (Θ.C (f.op a b) * Θ.A a) +
            frobNormSq (Θ.A a * Θ.B b)).re :=
       fun a => Finset.sum_le_sum (fun b _ => hge a b)
     have h_inner_strict :
-        (∑ _ : Fin n, (3 : ℝ)) < ∑ b : Fin n,
+          (∑ _ : Fin n, (3 : ℝ)) < ∑ b : Fin n,
           (frobNormSq (Θ.B b * Θ.C (f.op a₀ b)) +
            frobNormSq (Θ.C (f.op a₀ b) * Θ.A a₀) +
            frobNormSq (Θ.A a₀ * Θ.B b)).re := by
@@ -978,8 +996,8 @@ private theorem objective_eq_implies_per_pair_unitary
     matrix_amgm_at_one_equality (Θ.A a) (Θ.B b) (Θ.C (f.op a b)) h1 heq
   exact ⟨hUA, hUB, hUC, hABC⟩
 
-/-- **Dominance equality forces unitary collinearity (any binary operation).** -/
-theorem dominanceEquality_general
+/-- **Equality rigidity forces unitary collinearity (any binary operation).** -/
+theorem equality_rigidity_general
     (f : BinOp n) (Θ : HCParams n) (hfeas : Factorizes Θ f)
     (hH : (objective Θ f).re = 3 * (n : ℝ) ^ 2) :
     ∀ a b : Fin n,
@@ -989,7 +1007,8 @@ theorem dominanceEquality_general
       Θ.A a * Θ.B b * Θ.C (f.op a b) = 1 :=
   objective_eq_implies_per_pair_unitary f Θ hfeas hH
 
-/-- For a UnitaryCollinear factorization, the objective value is exactly 3n². -/
+/-- For a UnitaryCollinear factorization, the objective value is exactly 3|δ|.
+-/
 theorem uc_objective_value (Θ : HCParams n) (f : BinOp n) (huc : UnitaryCollinear Θ f) :
     (objective Θ f).re = 3 * (n : ℝ) ^ 2 := by
   have hnA : ∀ a, frobNormSq (Θ.A a) = 1 :=
@@ -1027,18 +1046,19 @@ theorem uc_objective_value (Θ : HCParams n) (f : BinOp n) (huc : UnitaryColline
         hidC a b, frobNormSq_conjTranspose, hnC]
     norm_num
   simp_rw [hterm]
-  -- (∑ a, ∑ b, (3 : ℂ)).re = 3 * n²
+  -- (∑ a, ∑ b, (3 : ℂ)).re = 3 * n² = 3 * |δ|
   simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   norm_num; ring
 
-/-- **Equality forces perfect collinearity (any binary operation).**
-    `H(Θ) = 3 n²` for a feasible nondegenerate Θ implies `R(Θ) = 0`. -/
-theorem dominance_equality_implies_perfect_collinearity
+/-- **Equality rigidity forces perfect collinearity (any binary operation).**
+    `ℋ(Θ) = 3|δ|` for a feasible nondegenerate Θ implies `ℛ_δ(Θ) = 0`.
+-/
+theorem equality_rigidity_implies_perfect_collinearity
     (f : BinOp n) (Θ : HCParams n) (hfeas : Factorizes Θ f)
     (hnd : Nondegenerate Θ)
     (hH_eq : (objective Θ f).re = 3 * (n : ℝ) ^ 2) :
     PerfectCollinearity Θ f := by
-  have hpp := dominanceEquality_general f Θ hfeas hH_eq
+  have hpp := equality_rigidity_general f Θ hfeas hH_eq
   rw [perfectCollinearity_iff_identities Θ f hnd]
   refine ⟨?_, ?_, ?_⟩
   · intro a b
@@ -1115,51 +1135,49 @@ theorem dominance_equality_implies_perfect_collinearity
 
 /-- **Theorem 10 Case 2 (Strict Gap for Non-Group Quasigroups, UNCONDITIONAL).**
     For any quasigroup `f` that is not a group isotope, every feasible Θ
-    satisfies `H(Θ) > 3 n²` strictly. Derived from the matrix AM–GM
-    equality rigidity in `dominanceEquality_general`: if `H = 3 n²`, then
+    satisfies `ℋ(Θ) > 3|δ|` strictly.
+    Derived from the matrix AM–GM
+    equality rigidity in `equality_rigidity_general`: if `ℋ(Θ) = 3|δ|`, then
     every supported triple is unitary collinear, which forces `f` to be
-    a group isotope.
-
-    Replaces a previous version that was conditional on a dominance-style
-    collinearity conjecture; the `strongCollinearityDominance` axiom has been
-    removed. -/
+    a group isotope. -/
 theorem strict_gap_non_group (f : BinOp n) (hq : IsQuasigroup f)
     (hnotgi : ¬ IsGroupIsotope f) :
     ∀ Θ : HCParams n, Factorizes Θ f →
       (objective Θ f).re > 3 * (n : ℝ) ^ 2 := by
   intro Θ hfeas
-  have hge := weakDominance_general f Θ hfeas
+  have hge := universal_lower_bound_general f Θ hfeas
   by_contra hle
   push_neg at hle
   have h_eq : (objective Θ f).re = 3 * (n : ℝ) ^ 2 := le_antisymm hle hge
   have hnd := factorizes_implies_nondegenerate Θ f hq hfeas
-  have hcol := dominance_equality_implies_perfect_collinearity f Θ hfeas hnd h_eq
+  have hcol := equality_rigidity_implies_perfect_collinearity f Θ hfeas hnd h_eq
   exact hnotgi (collinear_implies_group_isotope f hq ⟨Θ, hcol, hfeas, hnd⟩)
 
 /-- **Theorem 10 Case 2 (UNCONDITIONAL strict gap, axiom-free version).**
     For any quasigroup `f` that is not a group isotope, every feasible Θ
-    satisfies `H(Θ) > 3n²` strictly. This proof bypasses the
-    `collinear_to_unitary_collinear` axiom: from `H = 3n²` we directly
-    extract a `UnitaryCollinear` factorisation via `dominanceEquality_general`
-    (slot-unitary) plus `dominance_equality_implies_perfect_collinearity`
+    satisfies `ℋ(Θ) > 3|δ|` strictly.
+    This proof bypasses the
+    `collinear_to_unitary_collinear` axiom: from `H = 3|δ|` we directly
+    extract a `UnitaryCollinear` factorisation via `equality_rigidity_general`
+    (slot-unitary) plus `equality_rigidity_implies_perfect_collinearity`
     (R = 0), then apply the axiom-free `unitary_collinear_implies_group_isotope`
     (Theorem 4 unitary case).
-
     This makes precise that the manuscript's Theorem 10 / Conjecture 6.1
     resolution does NOT depend on the open Theorem 5 (general/rank-deficient
-    case). -/
+    case).
+-/
 theorem strict_gap_non_group_unconditional (f : BinOp n) (hq : IsQuasigroup f)
     (hnotgi : ¬ IsGroupIsotope f) :
     ∀ Θ : HCParams n, Factorizes Θ f →
       (objective Θ f).re > 3 * (n : ℝ) ^ 2 := by
   intro Θ hfeas
-  have hge := weakDominance_general f Θ hfeas
+  have hge := universal_lower_bound_general f Θ hfeas
   by_contra hle
   push_neg at hle
   have h_eq : (objective Θ f).re = 3 * (n : ℝ) ^ 2 := le_antisymm hle hge
   have hnd := factorizes_implies_nondegenerate Θ f hq hfeas
-  have hpp := dominanceEquality_general f Θ hfeas h_eq
-  have hcol := dominance_equality_implies_perfect_collinearity f Θ hfeas hnd h_eq
+  have hpp := equality_rigidity_general f Θ hfeas h_eq
+  have hcol := equality_rigidity_implies_perfect_collinearity f Θ hfeas hnd h_eq
   -- Construct UnitaryCollinear directly from slot-unitary + Factorizes + PC.
   have huc : UnitaryCollinear Θ f := {
     collinear := hcol,
@@ -1183,45 +1201,41 @@ theorem strict_gap_non_group_unconditional (f : BinOp n) (hq : IsQuasigroup f)
 
 /-- **Theorem 4 (Unitary Collinearity ⟺ Group Isotope, axiom-free).** For any
     finite quasigroup `f`, a unitary collinear factorisation exists if and only if
-    `f` is isotopic to a group. This is the manuscript's Theorem 4 packaged in
+    `f` is isotopic to a group.
+    This is the manuscript's Theorem 4 packaged in
     iff form, distinct from the more general Theorem 5 (which currently relies on
-    the open `collinear_to_unitary_collinear` axiom for the κ<1 case). -/
+    the open `collinear_to_unitary_collinear` axiom for the κ<1 case).
+-/
 theorem theorem4_unitary_collinearity_iff_group_isotope (f : BinOp n)
     (hq : IsQuasigroup f) :
     (∃ Θ : HCParams n, UnitaryCollinear Θ f) ↔ IsGroupIsotope f :=
   ⟨unitary_collinear_implies_group_isotope f hq,
-   group_isotope_admits_unitary_collinear f hq⟩
+   lemma14_group_isotope_admits_unitary_collinear f hq⟩
 
 /-- **Theorem 9, lower-bound half (Absolute Feasible Bound).** For any binary
     operation `f` and any feasible factorisation Θ, the objective satisfies
-    `H(Θ) ≥ 3n²`. Mechanised from the matrix AM-GM inequality (Lemma 16).
-
-    Identifier name `theorem8_*` retained for stable external references; in
-    the current manuscript the lower bound and equality rigidity are bundled
-    as Theorem 9 (`thm:absolute_lower_bound`). -/
-theorem theorem8_universal_lower_bound (f : BinOp n) (Θ : HCParams n)
+    `ℋ(Θ) ≥ 3|δ|`.
+    Mechanised from the matrix AM-GM inequality (Lemma 16).
+-/
+theorem theorem9_absolute_feasible_bound_lower (f : BinOp n) (Θ : HCParams n)
     (hfeas : Factorizes Θ f) :
     3 * (n : ℝ) ^ 2 ≤ (objective Θ f).re :=
-  weakDominance_general f Θ hfeas
+  universal_lower_bound_general f Θ hfeas
 
 /-- **Theorem 9, equality-rigidity half (axiom-free).** For any finite quasigroup
-    `f` and any feasible Θ, `H(Θ) = 3n²` if and only if Θ is UnitaryCollinear.
-
-    Combines `dominanceEquality_general` (slot-unitary side, from matrix AM-GM
-    rigidity) with `dominance_equality_implies_perfect_collinearity` (R = 0 side)
+    `f` and any feasible Θ, `ℋ(Θ) = 3|δ|` if and only if Θ is UnitaryCollinear.
+    Combines `equality_rigidity_general` (slot-unitary side, from matrix AM-GM
+    rigidity) with `equality_rigidity_implies_perfect_collinearity` (R = 0 side)
     for the forward direction, and `uc_objective_value` for the reverse.
-
-    Identifier name `theorem9_*` retained for stable external references; in
-    the current manuscript this is the rigidity half of Theorem 9
-    (`thm:absolute_lower_bound`). -/
-theorem theorem9_equality_rigidity (f : BinOp n) (hq : IsQuasigroup f)
+-/
+theorem theorem9_absolute_feasible_bound_rigidity (f : BinOp n) (hq : IsQuasigroup f)
     (Θ : HCParams n) (hfeas : Factorizes Θ f) :
     (objective Θ f).re = 3 * (n : ℝ) ^ 2 ↔ UnitaryCollinear Θ f := by
   refine ⟨?_, fun huc => uc_objective_value Θ f huc⟩
   intro hH
   have hnd := factorizes_implies_nondegenerate Θ f hq hfeas
-  have hpp := dominanceEquality_general f Θ hfeas hH
-  have hcol := dominance_equality_implies_perfect_collinearity f Θ hfeas hnd hH
+  have hpp := equality_rigidity_general f Θ hfeas hH
+  have hcol := equality_rigidity_implies_perfect_collinearity f Θ hfeas hnd hH
   exact {
     collinear := hcol,
     feasible := hfeas,
@@ -1238,16 +1252,18 @@ theorem theorem9_equality_rigidity (f : BinOp n) (hq : IsQuasigroup f)
     For any finite quasigroup `f`, the global minima of `H` exhibit a strict
     dichotomy determined by whether `f` is isotopic to a group:
 
-    - **Group isotopes:** the lower bound `H = 3n²` is attained, and any
+    - **Group isotopes:** the lower bound `H = 3|δ|` is attained, and any
       attainer is UnitaryCollinear.
     - **Non-group isotopes:** every feasible factorisation satisfies
-      `H > 3n²` strictly.
-
+      `H > 3|δ|` strictly.
     This packages the manuscript's Theorem 10 / HyperCube Conjecture 6.1
-    resolution into a single statement. The proof uses only the axiom-free
-    machinery (matrix AM-GM rigidity + Theorem 4 unitary case); it does NOT
-    depend on the open `collinear_to_unitary_collinear` axiom. -/
-theorem theorem10_global_optimality (f : BinOp n) (hq : IsQuasigroup f) :
+    resolution into a single statement.
+    The proof uses only the axiom-free
+    machinery (matrix AM-GM rigidity + Theorem 4 unitary case);
+    it does NOT
+    depend on the open `collinear_to_unitary_collinear` axiom.
+-/
+theorem theorem10_global_optimality_dichotomy (f : BinOp n) (hq : IsQuasigroup f) :
     (IsGroupIsotope f →
       ∃ Θ_opt : HCParams n, UnitaryCollinear Θ_opt f ∧
         (objective Θ_opt f).re = 3 * (n : ℝ) ^ 2) ∧
@@ -1257,15 +1273,16 @@ theorem theorem10_global_optimality (f : BinOp n) (hq : IsQuasigroup f) :
   refine ⟨?_, ?_⟩
   · -- Case 1: group isotope ⟹ achievable optimum.
     intro hgi
-    obtain ⟨Θ_opt, huc⟩ := group_isotope_admits_unitary_collinear f hq hgi
+    obtain ⟨Θ_opt, huc⟩ := lemma14_group_isotope_admits_unitary_collinear f hq hgi
     exact ⟨Θ_opt, huc, uc_objective_value Θ_opt f huc⟩
   · -- Case 2: non-group isotope ⟹ strict gap.
     exact strict_gap_non_group_unconditional f hq
 
 /-- **Theorem 7 (Optimality within the Collinear Manifold).**
     Restricted to the feasible collinear manifold, the minimum of H is achieved
-    by a unitary collinear factorization with value 3n². -/
-theorem collinear_manifold_optimality (f : BinOp n)
+    by a unitary collinear factorization with value 3|δ|.
+-/
+theorem theorem7_optimality_within_collinear_manifold (f : BinOp n)
     (hq : IsQuasigroup f)
     (hexists : ∃ Θ : HCParams n, PerfectCollinearity Θ f ∧ Factorizes Θ f) :
     ∃ Θ_opt : HCParams n,
@@ -1277,14 +1294,14 @@ theorem collinear_manifold_optimality (f : BinOp n)
   obtain ⟨Θ₀, hcol₀, hfeas₀⟩ := hexists
   have hnd₀ := factorizes_implies_nondegenerate Θ₀ f hq hfeas₀
   have hgi := collinear_implies_group_isotope f hq ⟨Θ₀, hcol₀, hfeas₀, hnd₀⟩
-  obtain ⟨Θ_opt, huc⟩ := group_isotope_admits_unitary_collinear f hq hgi
+  obtain ⟨Θ_opt, huc⟩ := lemma14_group_isotope_admits_unitary_collinear f hq hgi
   refine ⟨Θ_opt, huc, uc_objective_value Θ_opt f huc, ?_⟩
   -- Part 2: Universal lower bound on collinear manifold
   intro Θ hcol hfeas
   have hnd := factorizes_implies_nondegenerate Θ f hq hfeas
-  -- On collinear manifold: objective = inversePenalty + 0 = inversePenalty
+  -- On collinear manifold: objective = inverseScalePenalty + 0 = inverseScalePenalty
   have hdecomp := decomposition Θ f hnd
-  have hR_zero : misalignPenalty Θ f = 0 := hcol
+  have hR_zero : misalignmentPenalty Θ f = 0 := hcol
   rw [hdecomp, hR_zero, add_zero]
   exact amgm_lower_bound Θ f hq hnd hcol hfeas
 

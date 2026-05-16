@@ -14,7 +14,7 @@ import HyperCubeGroup.Basic
 import HyperCubeGroup.Decomposition
 import HyperCubeGroup.CollinearManifold
 import HyperCubeGroup.GroupIsotope
-import HyperCubeGroup.AbelianDominance
+import HyperCubeGroup.Abelian
 import HyperCubeGroup.Spectral
 import HyperCubeGroup.BlockCyclic
 import HyperCubeGroup.MatrixAMGM

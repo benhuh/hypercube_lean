@@ -8,7 +8,7 @@
   - δ ∈ {0,1}^{n×n×n} is the structure tensor: δ_abc = 𝟙{a ∘ b = c}
   - A, B, C are families of n×n complex matrices indexed by Q
   - T_abc = (1/n) Tr(A_a B_b C_c) approximates δ
-  - H(Θ) = Σ δ_abc (‖B_b C_c‖² + ‖C_c A_a‖² + ‖A_a B_b‖²)
+  - ℋ(Θ) = Σ δ_abc (‖B_b C_c‖² + ‖C_c A_a‖² + ‖A_a B_b‖²)
 
   We use the normalized Frobenius inner product ⟨X, Y⟩ = (1/n) Tr(X† Y)
   so that ‖U‖² = 1 for any unitary U.
@@ -164,7 +164,7 @@ theorem hcProduct_eq_frobInner (Θ : HCParams n) (a b c : Fin n) :
 def Factorizes (Θ : HCParams n) (f : BinOp n) : Prop :=
   ∀ a b c : Fin n, hcProduct Θ a b c = structureTensor f a b c
 
-/-- The feasible set F_δ. -/
+/-- The feasible set ℱ_δ. -/
 def FeasibleSet (f : BinOp n) : Set (HCParams n) :=
   {Θ | Factorizes Θ f}
 
@@ -176,10 +176,10 @@ structure Nondegenerate (Θ : HCParams n) : Prop where
   B_pos : ∀ b : Fin n, frobNormSq (Θ.B b) ≠ 0
   C_pos : ∀ c : Fin n, frobNormSq (Θ.C c) ≠ 0
 
-/-! ## Jacobian-based objective H -/
+/-! ## Jacobian-based objective ℋ -/
 
 /-- The Jacobian-based objective (Eq. 4):
-    H(Θ) = Σ_{a,b,c} δ_abc (‖B_b C_c‖² + ‖C_c A_a‖² + ‖A_a B_b‖²). -/
+    ℋ(Θ) = Σ_{a,b,c} δ_abc (‖B_b C_c‖² + ‖C_c A_a‖² + ‖A_a B_b‖²). -/
 def objective (Θ : HCParams n) (f : BinOp n) : ℂ :=
   ∑ a : Fin n, ∑ b : Fin n, ∑ c : Fin n,
     structureTensor f a b c *

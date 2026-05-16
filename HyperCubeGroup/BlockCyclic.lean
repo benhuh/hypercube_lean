@@ -5,8 +5,7 @@
     M = [[0, X, 0],
          [0, 0, Y],
          [Z, 0, 0]]
-  built from `(X, Y, Z) ∈ (Mat n)³`, used in the matrix AM-GM proof
-  (App_Abelian_Dominance.tex §2). We index by `Fin 3 × Fin n` rather
+  built from `(X, Y, Z) ∈ (Mat n)³`, used in the matrix AM-GM proof. We index by `Fin 3 × Fin n` rather
   than via `Matrix.fromBlocks` (which is 2×2), to keep the entry-wise
   computations self-contained.
 
@@ -351,9 +350,9 @@ theorem blockCyclic_cb_eq_one_iff (X Y Z : Matrix (Fin n) (Fin n) ℂ) :
       | (have := congr_fun (congr_fun hZXY p) q; exact this)
       | rfl
 
-/-! ## Reindex to `Fin (3*n)` so the Schur axiom applies
+/-! ## Reindex to `Fin (3*n)` so the Schur theorem applies
 
-The Schur axiom `matrix_unitary_schur_form` is stated for
+The Schur theorem `matrix_unitary_schur_form` is stated for
 `Matrix (Fin N) (Fin N) ℂ` with the natural `Fin N` linear order. The
 block-cyclic matrix as defined above is indexed by `Fin 3 × Fin n`
 (no built-in linear order). We reindex to `Fin (3 * n)` via the
@@ -364,7 +363,7 @@ noncomputable def blockCyclicFin (X Y Z : Matrix (Fin n) (Fin n) ℂ) :
     Matrix (Fin (3 * n)) (Fin (3 * n)) ℂ :=
   (blockCyclic X Y Z).submatrix finProdFinEquiv.symm finProdFinEquiv.symm
 
-/-- The Schur axiom applied to the reindexed block-cyclic matrix:
+/-- The Schur theorem applied to the reindexed block-cyclic matrix:
     there exists a unitary `U` putting `blockCyclicFin X Y Z` in upper
     triangular form. -/
 theorem blockCyclicFin_schur_form (X Y Z : Matrix (Fin n) (Fin n) ℂ) :

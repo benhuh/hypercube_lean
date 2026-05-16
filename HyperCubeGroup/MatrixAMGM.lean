@@ -1,10 +1,10 @@
 /-
   HyperCubeGroup.MatrixAMGM
 
-  The matrix AM--GM lemma (Lemma "Matrix AM--GM"),
-  specialised to the case `τ_n(XYZ) = 1`. This is the irreducible
-  "textbook input" from which the unconditional weak-dominance bound
-  `H ≥ 3 n²` and its equality rigidity follow on any quasigroup.
+  The Matrix AM-GM inequality (Lemma 16),
+  specialised to the case `tr(XYZ) = 1`. This is the irreducible
+  "textbook input" from which the unconditional lower bound
+  `ℋ(Θ) ≥ 3n²` and its equality rigidity follow on any quasigroup.
 
   Status:
 
@@ -268,15 +268,11 @@ theorem matrix_amgm_at_one_equality
   have hXYZ_one := (blockCyclicFin_cb_eq_one_iff X Y Z).mp hM3_id
   exact ⟨hXYZ_unit.1, hXYZ_unit.2.1, hXYZ_unit.2.2, hXYZ_one.1⟩
 
-/-! ## Manuscript Lemma 16 aliases -/
+/-! ## Manuscript Lemma 16 -/
 
 /-- **Lemma 16 (Matrix AM-GM)** of the manuscript at the unit-normalised-trace
-    case: `‖XY‖² + ‖YZ‖² + ‖ZX‖² ≥ 3` whenever `τ_n(XYZ) = 1`.
-
-    Identifier name `lemma28_*` retained for stable external references; the
-    Matrix AM-GM was numbered Lemma 28 in a prior manuscript revision and is
-    now `lem:app_matrix_amgm` (Lemma 16) in `Neurips_Appendix_Combined.tex`. -/
-theorem lemma28_matrix_amgm
+    case: `‖XY‖² + ‖YZ‖² + ‖ZX‖² ≥ 3` whenever `tr(XYZ) = 1`. -/
+theorem lemma16_matrix_amgm
     (X Y Z : Matrix (Fin n) (Fin n) ℂ)
     (h : (1 / (n : ℂ)) * (X * Y * Z).trace = 1) :
     (frobNormSq (X * Y)).re +
@@ -286,7 +282,7 @@ theorem lemma28_matrix_amgm
 
 /-- **Lemma 16 equality side.** Equality in the matrix AM-GM at unit normalised
     trace forces `X, Y, Z` to be unitary and `XYZ = I`. -/
-theorem lemma28_matrix_amgm_equality
+theorem lemma16_matrix_amgm_equality
     (X Y Z : Matrix (Fin n) (Fin n) ℂ)
     (h : (1 / (n : ℂ)) * (X * Y * Z).trace = 1)
     (heq : (frobNormSq (X * Y)).re +

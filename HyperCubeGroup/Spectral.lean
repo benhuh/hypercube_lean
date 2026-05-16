@@ -1,10 +1,11 @@
 /-
   HyperCubeGroup.Spectral
 
-  Spectral-theory lemmas used by the matrix AM-GM proof.
+  Spectral-theory lemmas used by the Matrix AM-GM proof (Lemma 16).
 
-  Single foundational axiom: `matrix_unitary_schur_form`. From it we
-  derive `schur_inequality_diag_form` for arbitrary complex matrices.
+  This file fully mechanises the unitary Schur triangulation
+  (`matrix_unitary_schur_form`) from scratch via induction on dimension,
+  and derives `schur_inequality_diag_form` for arbitrary complex matrices.
 
   Mathlib has all the constituent pieces (eigenspace decomposition,
   Gram-Schmidt, Frobenius norm) but does not yet package the unitary
@@ -515,14 +516,13 @@ theorem IsUpperTriangular.norm_trace_cubed_pow_four_le
         apply mul_le_mul_of_nonneg_left _ hcard_nn
         apply pow_le_pow_left₀ hsum_nn hsum
 
-/-! ## Towards the Schur triangulation theorem (mechanised steps)
+/-! ## Schur triangulation theorem
 
-This section progresses toward a full mechanisation of
-`matrix_unitary_schur_form` via induction on dimension. The base cases
-`n = 0` and `n = 1` are below. The inductive step uses
-`Module.End.exists_eigenvalue` to extract an eigenvalue, an orthonormal
-basis extension to build a unitary U with the eigenvector as its first
-column, and then recurses on the lower-right `k × k` compression. -/
+This section fully mechanises `matrix_unitary_schur_form` via induction
+on dimension. The base cases `n = 0` and `n = 1` are below. The inductive
+step uses `Module.End.exists_eigenvalue` to extract an eigenvalue, an
+orthonormal basis extension to build a unitary U with the eigenvector as
+its first column, and then recurses on the lower-right `k × k` compression. -/
 
 /-- For any complex matrix `A : Matrix (Fin (k+1)) (Fin (k+1)) ℂ`,
     there exist an eigenvalue `μ` and a unit vector `v : Fin (k+1) → ℂ`

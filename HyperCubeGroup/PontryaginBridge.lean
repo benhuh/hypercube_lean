@@ -25,7 +25,7 @@
     `AddChar.sum_apply_eq_ite` (completeness via doubleDualEmb).
   -/
 
-import HyperCubeGroup.AbelianDominance
+import HyperCubeGroup.Abelian
 import Mathlib.Algebra.Group.MinimalAxioms
 import Mathlib.Analysis.Fourier.FiniteAbelian.Orthogonality
 import Mathlib.Analysis.Fourier.FiniteAbelian.PontryaginDuality
@@ -466,7 +466,7 @@ theorem characterBasis_diagRep_unitaryCollinear (hab : IsAbelianGroup f) :
     exact mul_eq_one_comm.mp (diagRep_unitary cb.chars c)
 
 /-- **Explicit objective value.** The diagRep-characterBasis Θ achieves
-    `H(Θ).re = 3n²`, the global minimum on the collinear manifold. -/
+    `ℋ(Θ).re = 3n²`, the global minimum on the collinear manifold. -/
 theorem characterBasis_diagRep_objective_value (hab : IsAbelianGroup f) :
     let cb := characterBasis hab
     let Θ : HCParams n := ⟨diagRep cb.chars, diagRep cb.chars,
@@ -476,7 +476,7 @@ theorem characterBasis_diagRep_objective_value (hab : IsAbelianGroup f) :
 
 /-- **Existence of the abelian optimum via diagRep-characterBasis.**
     For any abelian `f`, there exists a unitary collinear factorisation
-    achieving `H = 3n²`, constructed via Pontryagin duality. -/
+    achieving `ℋ = 3n²`, constructed via Pontryagin duality. -/
 theorem abelian_admits_diagRep_optimum (hab : IsAbelianGroup f) :
     ∃ Θ_opt : HCParams n,
       UnitaryCollinear Θ_opt f ∧
@@ -487,7 +487,7 @@ theorem abelian_admits_diagRep_optimum (hab : IsAbelianGroup f) :
   · exact characterBasis_diagRep_unitaryCollinear hab
   · exact characterBasis_diagRep_objective_value hab
 
-/-- For an abelian group `f`, there exists a feasible Θ achieving `H = 3n²`.
+/-- For an abelian group `f`, there exists a feasible Θ achieving `ℋ = 3n²`.
     Direct corollary of `abelian_admits_diagRep_optimum` (which produces a
     UnitaryCollinear factorisation), unwrapping `Factorizes`. -/
 theorem abelian_optimum_attained_feasible (hab : IsAbelianGroup f) :

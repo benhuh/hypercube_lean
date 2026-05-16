@@ -1,14 +1,13 @@
 /-
   HyperCubeGroup.Plancherel
 
-  Structural Plancherel / Parseval infrastructure for the HyperCube
-  model. Everything in this file is unconditionally proved; nothing
-  depends on the (open) Collinearity Dominance Conjecture.
+  Structural Plancherel / Parseval infrastructure for the HyperCube model.
+  Everything in this file is unconditionally proved.
 
   Contents:
 
     1. `H_eq_mass_matrix_form` — for any quasigroup `f`,
-       `H(Θ;f) = (1/n) [Tr(R_A · L_B) + Tr(R_B · L_C) + Tr(R_C · L_A)]`,
+       `ℋ(Θ) = (1/n) [Tr(R_A · L_B) + Tr(R_B · L_C) + Tr(R_C · L_A)]`,
        where `R_X := Σ_x X_x† X_x`, `L_X := Σ_x X_x X_x†`. Pure
        algebra; no abelian assumption.
 
@@ -24,15 +23,6 @@
        identities for the mass matrices:
          `Σ_a A_a† A_a = (1/n) Σ_χ Â_χ† Â_χ`,
          `Σ_a A_a A_a† = (1/n) Σ_χ Â_χ Â_χ†`.
-
-  This file deliberately stops at unconditional structural identities;
-  the abelian-dominance results live in `AbelianDominance.lean`, where
-  they are now unconditional theorems derived from the matrix AM-GM
-  rigidity in `MatrixAMGM.lean`. The dominance-style conjectures
-  present in prior manuscript revisions (and the corresponding
-  conjecture-level axioms here) have been removed; their conclusions
-  are subsumed by the unconditional Theorem 9 / Theorem 10 in the
-  current manuscript.
 -/
 
 import HyperCubeGroup.Decomposition
@@ -141,7 +131,7 @@ private theorem sum_CA_support_eq_uniform (Θ : HCParams n) (f : BinOp n)
     exact e.sum_comp (fun c => frobNormSq (Θ.C c * Θ.A a))
 
 /-- **Mass-matrix rewrite of the objective.** For any quasigroup `f`,
-      `H(Θ; f) = (1/n) · [Tr(R_A L_B) + Tr(R_B L_C) + Tr(R_C L_A)]`.
+      `ℋ(Θ) = (1/n) · [Tr(R_A L_B) + Tr(R_B L_C) + Tr(R_C L_A)]`.
     No abelian assumption is used. -/
 theorem H_eq_mass_matrix_form (Θ : HCParams n) (f : BinOp n)
     (hq : IsQuasigroup f) :
@@ -395,5 +385,3 @@ theorem mass_L_eq_fourier_sum (cb : CharacterBasis f)
 end CharacterBasis
 
 end
-
-

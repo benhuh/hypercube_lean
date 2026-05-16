@@ -3,7 +3,7 @@
 
   Existence of global minimisers via Tikhonov regularisation
   (Manuscript Appendix: "Global Existence via Tikhonov Regularization" /
-  Theorem 27 / Corollary 28).
+  Theorem 18).
 
   ## Main results
 
@@ -14,7 +14,7 @@
     any closed ball where it is non-empty.
   * `exists_minOn_feasible_tikhonov`: **the canonical Tikhonov result.**
     For any `λ > 0` and any feasible `Θ_0`, the regularised objective
-    `H(Θ).re + λ ‖Θ‖²` attains its minimum on the entire feasible set.
+    `ℋ(Θ).re + λ ‖Θ‖²` attains its minimum on the entire feasible set.
   * `exists_minOn_feasible_of_coercive`: conditional unregularised
     Weierstrass — given coercivity of the objective on the feasible set,
     the unregularised global minimum exists.
@@ -27,8 +27,8 @@
   compact (Heine-Borel via FiniteDimensional.proper). Continuous
   functions on compact sets attain their minimum (Weierstrass).
 
-  The Tikhonov result uses coercivity of `H(Θ).re + λ ‖Θ‖²` for `λ > 0`
-  (since `H(Θ).re ≥ 0` and the regularisation term grows quadratically),
+  The Tikhonov result uses coercivity of `ℋ(Θ).re + λ ‖Θ‖²` for `λ > 0`
+  (since `ℋ(Θ).re ≥ 0` and the regularisation term grows quadratically),
   which gives bounded sublevel sets, hence compact sublevel sets, hence
   Weierstrass applies.
 
@@ -266,7 +266,7 @@ theorem continuous_frobNormSq_AB (a b : Fin n) :
 
 /-! ## Continuity of the objective -/
 
-/-- The objective `H(Θ)` is continuous in `Θ`. -/
+/-- The objective `ℋ(Θ)` is continuous in `Θ`. -/
 theorem continuous_objective (f : BinOp n) :
     Continuous (fun Θ : HCParams n => objective Θ f) := by
   unfold objective
@@ -387,11 +387,11 @@ theorem exists_minOn_feasible_ball (f : BinOp n) (R : ℝ)
 
 /-! ## Tikhonov-regularised minimum existence -/
 
-/-- The Tikhonov-regularised objective: `H(Θ).re + λ ‖Θ‖²`. -/
+/-- The Tikhonov-regularised objective: `ℋ(Θ).re + λ ‖Θ‖²`. -/
 noncomputable def tikhonovObjective (Θ : HCParams n) (f : BinOp n) (lam : ℝ) : ℝ :=
   (objective Θ f).re + lam * ‖Θ‖ ^ 2
 
-/-- The objective `H(Θ)` has nonneg real part (sum of nonneg Frobenius norm-squareds). -/
+/-- The objective `ℋ(Θ)` has nonneg real part (sum of nonneg Frobenius norm-squareds). -/
 theorem objective_re_nonneg (Θ : HCParams n) (f : BinOp n) :
     0 ≤ (objective Θ f).re := by
   unfold objective
@@ -437,7 +437,7 @@ theorem isClosed_tikhonov_sublevel (f : BinOp n) (lam M : ℝ) :
     Bound: if `H_λ(Θ) ≤ M`, then `‖Θ‖² ≤ M/λ`. -/
 theorem tikhonov_sublevel_bounded (f : BinOp n) (lam : ℝ) (h_lam : 0 < lam) (M : ℝ) :
     Bornology.IsBounded {Θ : HCParams n | tikhonovObjective Θ f lam ≤ M} := by
-  -- ‖Θ‖² ≤ M/λ since H(Θ).re + λ‖Θ‖² ≤ M and H(Θ).re ≥ 0.
+  -- ‖Θ‖² ≤ M/λ since ℋ(Θ).re + λ‖Θ‖² ≤ M and ℋ(Θ).re ≥ 0.
   rw [Metric.isBounded_iff_subset_closedBall 0]
   refine ⟨Real.sqrt (max 0 (M / lam)), ?_⟩
   intro Θ hΘ
@@ -465,7 +465,7 @@ theorem isCompact_tikhonov_sublevel (f : BinOp n) (lam : ℝ) (h_lam : 0 < lam) 
     (tikhonov_sublevel_bounded f lam h_lam M)
 
 /-- **Tikhonov regularised minimum existence.** For any `λ > 0` and any
-    feasible `Θ_0`, the regularised objective `H(Θ).re + λ ‖Θ‖²`
+    feasible `Θ_0`, the regularised objective `ℋ(Θ).re + λ ‖Θ‖²`
     achieves its minimum on the feasible set. -/
 theorem exists_minOn_feasible_tikhonov (f : BinOp n) (lam : ℝ) (h_lam : 0 < lam)
     (Θ_0 : HCParams n) (h_feas_0 : Factorizes Θ_0 f) :
@@ -582,7 +582,7 @@ theorem exists_minOn_feasible_of_coercive (f : BinOp n)
 
 The full Tikhonov-style result `exists_minOn_feasible_tikhonov` gives:
 for any `λ > 0` and any feasible `Θ_0`, there exists a feasible `Θ_min`
-minimising `H(Θ).re + λ ‖Θ‖²` over the entire feasible set. The proof
+minimising `ℋ(Θ).re + λ ‖Θ‖²` over the entire feasible set. The proof
 combines:
   * Coercivity: `H_λ(Θ) ≥ λ ‖Θ‖²`, so sublevel sets are bounded.
   * Closedness: from continuity of the objective.
@@ -622,19 +622,12 @@ deferred here because they require a substantial chunk of additional
 boilerplate. The existence theorem above is ready to consume them
 once instantiated. -/
 
-/-! ## Manuscript Theorem 27 alias -/
+/-! ## Theorem 18: Existence for Regularized Objective -/
 
-/-- **Theorem 27 (Existence for Regularized Objective).** For any `ε > 0` and
+/-- **Theorem 18 (Existence for Regularized Objective).** For any `ε > 0` and
     any feasible factorisation, the regularised objective
-    `H(Θ).re + ε ‖Θ‖²` achieves its minimum on the feasible set.
-
-    Aliased manuscript name for `exists_minOn_feasible_tikhonov`.
-
-    Identifier name `theorem16_*` retained for stable external references;
-    the existence theorem was numbered Theorem 16 in a prior manuscript
-    revision and is now `thm:app_regularized_existence` (Theorem 27) in
-    `Neurips_Appendix_Combined.tex`. -/
-theorem theorem16_tikhonov_existence (f : BinOp n) (eps : ℝ) (h_eps : 0 < eps)
+    `ℋ(Θ).re + ε‖Θ‖²` achieves its minimum on the feasible set. -/
+theorem theorem18_regularized_existence (f : BinOp n) (eps : ℝ) (h_eps : 0 < eps)
     (Θ_0 : HCParams n) (h_feas_0 : Factorizes Θ_0 f) :
     ∃ Θ_min : HCParams n, Factorizes Θ_min f ∧
       ∀ Θ' : HCParams n, Factorizes Θ' f →

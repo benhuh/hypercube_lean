@@ -1,5 +1,5 @@
 /-
-  HyperCubeGroup.AbelianDominance
+  HyperCubeGroup.Abelian
 
   Abelian-group structure for the HyperCube model.
 
@@ -9,27 +9,17 @@
     * The diagonal representation `diagRep` derived from a character
       system, including its homomorphism, unitarity, and feasibility
       properties; this gives an explicit unitary collinear factorisation
-      for any abelian group via `group_isotope_admits_unitary_collinear`.
+      for any abelian group via `lemma14_group_isotope_admits_unitary_collinear`.
     * Frobenius-norm unitary invariance and the **full** `U(n)³` gauge
       invariance of the objective `H` (`objective_full_unitary_gauge`),
       strengthening the symmetric `objective_unitary_gauge`.
     * The cyclic group `Z/nZ` as a concrete instance.
 
-  Status of the dominance results:
-    * `weak_dominance_abelian`, `abelian_minimizers_collinear`, and
-      `abelian_global_optimality` are now thin wrappers around the
-      unconditional `weakDominance_general` and `dominanceEquality_general`
-      proved in `GroupIsotope.lean`. The previous abelian-specific
-      conjecture axioms (`abelianWeakDominance`, `abelianDominanceTightness`)
-      have been removed; their conclusions are derived as theorems from
-      the matrix AM-GM lemma in `MatrixAMGM.lean`.
-    * `MatrixAMGM.matrix_amgm_at_one` and `matrix_amgm_at_one_equality`
-      are both proved theorems (Tier 2A complete); there are no remaining
-      axioms in `MatrixAMGM.lean`.
-
-  See `HyperCubeGroup.Plancherel` for the structural Fourier
-  infrastructure (mass-matrix rewrite, Plancherel identities for mass
-  matrices) that the original conjecture-level approach was built on.
+  Note on history:
+      * The theorems in this file previously relied on abelian-specific
+        conjectures. They are now unconditional thin wrappers around the
+        general Universal Lower Bound and Equality Rigidity theorems
+        proved in `GroupIsotope.lean` via the Matrix AM-GM inequality.
 -/
 
 import HyperCubeGroup.GroupIsotope
@@ -49,32 +39,6 @@ structure IsAbelianGroup (f : BinOp n) extends IsQuasigroup f : Prop where
   assoc : IsAssociative f
   comm : ∀ a b : Fin n, f.op a b = f.op b a
   identity : ∃ e : Fin n, ∀ a : Fin n, f.op e a = a ∧ f.op a e = a
-
-/-- An abelian group is a group isotope. -/
-theorem abelian_is_group_isotope (f : BinOp n) (hab : IsAbelianGroup f) :
-    IsGroupIsotope f := by
-  exact ⟨f, hab.assoc, Equiv.refl _, Equiv.refl _, Equiv.refl _, fun _ _ => rfl⟩
-
-/-! ## Characters of abelian groups
-
-The `Character` and `CharacterBasis` structures live in
-`HyperCubeGroup.Plancherel`; we re-export the former here for backward
-compatibility with the existing `diagRep*` API in this file. -/
-
-/-- For abelian groups, there exist exactly n orthogonal characters.
-    By Pontryagin duality for finite abelian groups (Mathlib: `AddChar.card_eq`,
-    `AddChar.wInner_cWeight_eq_boole`, `AddChar.sum_apply_eq_ite`).
-    The theorems below are parameterized by characters directly,
-    so this existential is not needed as an axiom. -/
-theorem abelian_characters_type (f : BinOp n) (_hab : IsAbelianGroup f) :
-    ∀ (chars : Fin n → Character f),
-      (∀ i j : Fin n,
-        (1 / (n : ℂ)) * ∑ g : Fin n, (chars i).val g * starRingEnd ℂ ((chars j).val g) =
-          if i = j then 1 else 0) →
-      (∀ g h : Fin n,
-        (1 / (n : ℂ)) * ∑ i : Fin n, (chars i).val g * starRingEnd ℂ ((chars i).val h) =
-          if g = h then 1 else 0) →
-      True := fun _ _ _ => trivial
 
 /-! ## Diagonal representation for abelian groups -/
 
@@ -127,18 +91,6 @@ theorem diagRep_factorizes {f : BinOp n} (chars : Fin n → Character f)
   change (1 / (↑n : ℂ)) * ∑ i : Fin n, (chars i).val (f.op a b) *
     starRingEnd ℂ ((chars i).val c) = _
   exact hcomp (f.op a b) c
-
-/-! ## Scalar dominance inequality -/
-
-/-- **Scalar AM-GM (three variables).**
-    For nonneg reals α, β, γ: α + β + γ ≥ 3 · (αβγ)^{1/3}.
-    We state this without the cube root to avoid HPow ℝ ℝ issues:
-    (α + β + γ)³ ≥ 27 αβγ. -/
-theorem real_amgm_three_cubed (α β γ : ℝ) (hα : 0 ≤ α) (hβ : 0 ≤ β) (hγ : 0 ≤ γ) :
-    (α + β + γ) ^ 3 ≥ 27 * (α * β * γ) := by
-  nlinarith [sq_nonneg (α - β), sq_nonneg (β - γ), sq_nonneg (α - γ),
-             sq_nonneg α, sq_nonneg β, sq_nonneg γ,
-             mul_nonneg hα hβ, mul_nonneg hβ hγ, mul_nonneg hα hγ]
 
 /-! ## Frobenius norm unitary invariance -/
 
@@ -256,7 +208,7 @@ theorem objective_unitary_gauge (Θ : HCParams n) (f : BinOp n)
 
 /-! ### Full U(n)³ gauge
 
-The objective `H` is invariant under the **full** unitary gauge with three
+The objective `ℋ` is invariant under the **full** unitary gauge with three
 **independent** unitaries `(U, V, W)`:
   `A_a ↦ U A_a V†`, `B_b ↦ V B_b W†`, `C_c ↦ W C_c U†`.
 This is the natural unitary subgroup of the structural gauge
@@ -320,94 +272,6 @@ theorem objective_full_unitary_gauge (Θ : HCParams n) (f : BinOp n)
       frobNormSq_unitary_sandwich W V _ hW' hV',
       frobNormSq_unitary_sandwich U W _ hU' hW']
 
-/-! ## Unconditional content (no axioms)
-
-Two unconditional results follow directly from previously proved
-theorems and isolate exactly the part of the abelian dominance picture
-that does **not** depend on the dominance-style conjectures present in
-prior manuscript revisions (those conjectures have since been subsumed
-by the unconditional Theorem 9 / Theorem 10 results in the current
-manuscript).
-
-  * `abelian_admits_optimal_unitary_collinear` — existence of a
-    unitary collinear factorisation Θ_opt with `H(Θ_opt) = 3 n²` for
-    any abelian `f`.
-
-  * `dominance_on_collinear_manifold` — for **any** quasigroup `f`
-    (abelian or not), the bound `H(Θ) ≥ 3 n²` holds for every
-    feasible nondegenerate Θ on the collinear manifold (`R = 0`).
-
-Combined, these say: on the collinear manifold the global minimum is
-attained by abelian groups at `H = 3 n²`. The lower bound off the
-collinear manifold is now an unconditional theorem
-(`weakDominance_general`), no longer an axiom. -/
-
-/-- For every abelian operation `f`, there exists a unitary collinear
-    factorisation `Θ_opt` with `H(Θ_opt) = 3 n²`. -/
-theorem abelian_admits_optimal_unitary_collinear (f : BinOp n)
-    (hab : IsAbelianGroup f) :
-    ∃ Θ_opt : HCParams n, UnitaryCollinear Θ_opt f ∧
-      (objective Θ_opt f).re = 3 * (n : ℝ) ^ 2 := by
-  have hgi := abelian_is_group_isotope f hab
-  obtain ⟨Θ, huc⟩ := group_isotope_admits_unitary_collinear f hab.toIsQuasigroup hgi
-  exact ⟨Θ, huc, uc_objective_value Θ f huc⟩
-
-/-- **Dominance on the collinear manifold (unconditional).**
-    For any quasigroup `f`, every feasible nondegenerate Θ with
-    `R(Θ) = 0` (i.e. `PerfectCollinearity`) satisfies `H(Θ) ≥ 3 n²`.
-    Direct corollary of `decomposition` (`H = B + R`) and
-    `amgm_lower_bound` (`B ≥ 3 n²` on the collinear manifold). -/
-theorem dominance_on_collinear_manifold (f : BinOp n) (hq : IsQuasigroup f)
-    (Θ : HCParams n) (hfeas : Factorizes Θ f) (hnd : Nondegenerate Θ)
-    (hcol : PerfectCollinearity Θ f) :
-    (objective Θ f).re ≥ 3 * (n : ℝ) ^ 2 := by
-  have hB := amgm_lower_bound Θ f hq hnd hcol hfeas
-  have hdec := decomposition Θ f hnd
-  have hR_zero : (misalignPenalty Θ f).re = 0 := by
-    rw [show misalignPenalty Θ f = 0 from hcol]; simp
-  rw [hdec, Complex.add_re, hR_zero, add_zero]
-  exact hB
-
-/-! ## Abelian-specific wrappers around the general dominance theorems
-
-The general theorems live in `HyperCubeGroup.GroupIsotope` so that the
-unconditional `strict_gap_non_group` there does not depend on
-`strongCollinearityDominance` (now removed). The wrappers below specialise
-them to the abelian case, preserving the public API. -/
-
-/-- **Weak Collinearity Dominance for Abelian Groups** (theorem).
-    Every feasible Θ over an abelian `f` satisfies `H ≥ 3 n²`. Thin
-    wrapper around `weakDominance_general`, ultimately resting on
-    `matrix_amgm_at_one`. Replaces the previous `abelianWeakDominance`
-    axiom. -/
-theorem weak_dominance_abelian (f : BinOp n) (_hab : IsAbelianGroup f) :
-    ∀ Θ : HCParams n, Factorizes Θ f →
-      (objective Θ f).re ≥ 3 * (n : ℝ) ^ 2 :=
-  fun Θ hfeas => weakDominance_general f Θ hfeas
-
-/-- **Minimisers collinear for Abelian Groups** (theorem). For abelian
-    `f`, any feasible nondegenerate Θ with `H = 3 n²` is perfectly
-    collinear. Thin wrapper around
-    `dominance_equality_implies_perfect_collinearity`. Replaces the
-    previous `abelianDominanceTightness` axiom. -/
-theorem abelian_minimizers_collinear (f : BinOp n) (_hab : IsAbelianGroup f) :
-    ∀ Θ : HCParams n, Factorizes Θ f → Nondegenerate Θ →
-      (objective Θ f).re = 3 * (n : ℝ) ^ 2 →
-      PerfectCollinearity Θ f :=
-  fun Θ hfeas hnd hH_eq =>
-    dominance_equality_implies_perfect_collinearity f Θ hfeas hnd hH_eq
-
-
-/-- **Global optimality for Abelian Groups** — both the existence of an
-    optimal unitary collinear factorisation and the universal lower bound
-    are now unconditionally derived (modulo `matrix_amgm_at_one`). -/
-theorem abelian_global_optimality (f : BinOp n) (hab : IsAbelianGroup f) :
-    (∃ Θ_opt : HCParams n, UnitaryCollinear Θ_opt f ∧
-      (objective Θ_opt f).re = 3 * (n : ℝ) ^ 2) ∧
-    (∀ Θ : HCParams n, Factorizes Θ f →
-      (objective Θ f).re ≥ 3 * (n : ℝ) ^ 2) :=
-  ⟨abelian_admits_optimal_unitary_collinear f hab,
-   weak_dominance_abelian f hab⟩
 
 /-! ## Cyclic group Z/nZ -/
 

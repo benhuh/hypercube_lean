@@ -1,14 +1,13 @@
 /-
   HyperCubeGroup.CollinearManifold
 
-  Analysis of the collinear manifold {Θ | R(Θ;δ) = 0} (Section 4).
+  Analysis of the Collinear Manifold {Θ | ℛ_δ(Θ) = 0} (Section 4).
 
-  Main results (manuscript numbering):
-  - Lemma 2: Shared Gram matrices X, Y, Z (index-independent, trace-n PSD)
-  - Lemma 3: Normalized rank κ = rank(X)/n ≤ 1, with κ=1 iff full-rank (unitary)
-  - Lemma 6: AM-GM lower bound B ≥ 3 Σ δ_abc |T_abc|^{4/3}
-  - Theorem 7: On the collinear manifold, the minimum of H is achieved by
-    a unitary collinear factorization with value 3|δ|
+  Main results:
+  - Lemma 2 (Shared Gram Matrices): Shared Gram matrices X, Y, Z (index-independent, trace-n PSD)
+  - Lemma 3 (Normalized Rank κ): Normalized rank κ = rank(X)/n ≤ 1, with κ=1 iff full-rank (unitary)
+  - Lemma 6 (Collinear Lower Bound): ℬ_δ(Θ) ≥ 3 Σ δ_abc |T_abc|^{4/3}
+  - Theorem 7 (Optimality within the Collinear Manifold): On the collinear manifold, the minimum of ℋ is achieved by a unitary collinear factorization with value 3|δ|
 -/
 
 import HyperCubeGroup.Decomposition
@@ -44,7 +43,7 @@ def gramC (Θ : HCParams n) (c : Fin n) : Matrix (Fin n) (Fin n) ℂ :=
     A_a(B_b C_c) = (A_a B_b)C_c. The collinearity forces
     A_a A_a† / ‖A_a‖² = C_c† C_c / ‖C_c‖² for all a, c in supported triples.
     Connectivity of the quasigroup support graph propagates this globally. -/
-theorem shared_gram_matrices (Θ : HCParams n) (f : BinOp n)
+theorem lemma2_shared_gram_matrices (Θ : HCParams n) (f : BinOp n)
     (hq : IsQuasigroup f) (hnd : Nondegenerate Θ)
     (hcol : PerfectCollinearity Θ f) (hfeas : Factorizes Θ f) :
     ∃ X : Matrix (Fin n) (Fin n) ℂ,
@@ -124,14 +123,14 @@ def kappaTriple (Θ : HCParams n) (a b c : Fin n) : ℂ :=
     The shared Gram matrices satisfy X = κ X², making P := κX an
     orthogonal projection. Hence κ = rank(X)/n ≤ 1,
     with equality (κ = 1) iff X = Y = Z = I_n (full-rank, Gram = identity). -/
-theorem normalized_rank_constant (Θ : HCParams n) (f : BinOp n)
+theorem lemma3_normalized_rank_constant (Θ : HCParams n) (f : BinOp n)
     (hq : IsQuasigroup f) (hnd : Nondegenerate Θ)
     (hcol : PerfectCollinearity Θ f) (hfeas : Factorizes Θ f) :
     ∃ κ : ℂ,
       (∀ a b : Fin n, kappaTriple Θ a b (f.op a b) = κ) ∧
       -- κ ≤ 1 (as real)
       κ.re ≤ 1 ∧ κ.re > 0 := by
-  obtain ⟨X, hgA, hgC⟩ := shared_gram_matrices Θ f hq hnd hcol hfeas
+  obtain ⟨X, hgA, hgC⟩ := lemma2_shared_gram_matrices Θ f hq hnd hcol hfeas
   have hids := (perfectCollinearity_iff_identities Θ f hnd).mp hcol
   have hT : ∀ a b : Fin n, hcProduct Θ a b (f.op a b) = 1 := by
     intro a b; have := hfeas a b (f.op a b); rwa [structureTensor, if_pos rfl] at this
@@ -352,13 +351,13 @@ theorem normalized_rank_constant (Θ : HCParams n) (f : BinOp n)
   exact ⟨κ, hκ_triple, hκ_le, hκ_pos⟩
 
 /-- κ = 1 iff Gram matrices are identity (full-rank / unitary factorization). -/
-theorem kappa_one_iff_unitary (Θ : HCParams n) (f : BinOp n)
+theorem lemma3_kappa_one_iff_unitary (Θ : HCParams n) (f : BinOp n)
     (hq : IsQuasigroup f) (hnd : Nondegenerate Θ)
     (hcol : PerfectCollinearity Θ f) (hfeas : Factorizes Θ f)
     (hκ : ∀ a b : Fin n, kappaTriple Θ a b (f.op a b) = 1) :
     ∀ a : Fin n, gramA Θ a = 1 := by
   -- Setup
-  obtain ⟨X, hgA, hgC⟩ := shared_gram_matrices Θ f hq hnd hcol hfeas
+  obtain ⟨X, hgA, hgC⟩ := lemma2_shared_gram_matrices Θ f hq hnd hcol hfeas
   have hids := (perfectCollinearity_iff_identities Θ f hnd).mp hcol
   have hT : ∀ a b : Fin n, hcProduct Θ a b (f.op a b) = 1 := by
     intro a b; have := hfeas a b (f.op a b); rwa [structureTensor, if_pos rfl] at this
@@ -482,16 +481,16 @@ private theorem sum_inv_ge_three (a b c : ℝ) (ha : a > 0) (hb : b > 0) (hc : c
   -- s ≥ 0 and s³ ≥ 27 → s ≥ 3
   nlinarith [sq_nonneg (s - 3), sq_nonneg s]
 
-/-- **Lemma 6 (AM-GM Lower Bound).**
+/-- **Lemma 6 (Collinear Lower Bound).**
     Assume nondegeneracy and perfect collinearity.
-    B(Θ; δ) ≥ 3n² (for feasible Θ where |T|=1 on support). -/
-theorem amgm_lower_bound (Θ : HCParams n) (f : BinOp n)
+    ℬ_δ(Θ) ≥ 3n² (for feasible Θ where |T|=1 on support). -/
+theorem lemma6_collinear_lower_bound (Θ : HCParams n) (f : BinOp n)
     (hq : IsQuasigroup f) (hnd : Nondegenerate Θ)
     (hcol : PerfectCollinearity Θ f) (hfeas : Factorizes Θ f) :
-    (inversePenalty Θ f).re ≥
+    (inverseScalePenalty Θ f).re ≥
       3 * (n : ℝ) ^ 2 := by
   -- Get κ constant
-  obtain ⟨κ, hκ_const, hκ_le, hκ_pos⟩ := normalized_rank_constant Θ f hq hnd hcol hfeas
+  obtain ⟨κ, hκ_const, hκ_le, hκ_pos⟩ := lemma3_normalized_rank_constant Θ f hq hnd hcol hfeas
   -- T = 1 on support
   have hT : ∀ a b : Fin n, hcProduct Θ a b (f.op a b) = 1 := by
     intro a b; have := hfeas a b (f.op a b); rwa [structureTensor, if_pos rfl] at this
@@ -524,7 +523,7 @@ theorem amgm_lower_bound (Θ : HCParams n) (f : BinOp n)
     intro a b ha hb; simp [Complex.mul_im, ha, hb]
   have mul_re : ∀ a b : ℂ, a.im = 0 → b.im = 0 → (a * b).re = a.re * b.re := by
     intro a b ha hb; simp [Complex.mul_re, ha, hb]
-  -- Each summand in inversePenalty (with T=1): (1/α + 1/β + 1/γ).re ≥ 3
+  -- Each summand in inverseScalePenalty (with T=1): (1/α + 1/β + 1/γ).re ≥ 3
   have per_term : ∀ a b : Fin n,
       let c := f.op a b
       (hcProduct Θ a b c * starRingEnd ℂ (hcProduct Θ a b c) *
@@ -561,8 +560,8 @@ theorem amgm_lower_bound (Θ : HCParams n) (f : BinOp n)
         mul_re (frobNormSq (Θ.A a)) (frobNormSq (Θ.B b)) hαi hβi] at this
       exact this
     exact sum_inv_ge_three _ _ _ hα_pos hβ_pos hγ_pos (hprod_eq ▸ hκ_le)
-  -- Sum over all (a,b) pairs: inversePenalty.re ≥ 3n²
-  unfold inversePenalty
+  -- Sum over all (a,b) pairs: inverseScalePenalty.re ≥ 3n²
+  unfold inverseScalePenalty
   rw [Complex.re_sum]
   have : ∀ a : Fin n, Complex.re (∑ b : Fin n,
       (let c := f.op a b; let t := hcProduct Θ a b c;
